@@ -91,8 +91,8 @@ const siteConfig: SiteConfig = {
             href: 'https://www.linkedin.com/in/yikai-wang-unc/'
         },
         {
-            text: 'X/Twitter',
-            href: 'https://twitter.com/'
+            text: 'Github',
+            href: 'https://github.com/aia00/'
         }
     ],
     hero: {
