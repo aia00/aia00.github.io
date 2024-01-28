@@ -37,7 +37,7 @@ Data Risk R&D Management Department
 
 ## Skills and Expertise
 
-I specialize both in coding and machine learning theory. My proficiency includes **Python**, **C++**, **R**, and frameworks such as **Pytorch** for machine learning and data analysis. On the theoretical side, I'm well-versed in optimization, statiscics and stochastic modeling.
+I specialize both in coding and machine learning theory. My proficiency includes **Python**, **C++**, **R**, and frameworks such as **Pytorch** for machine learning and data analysis. On the theoretical side, I'm well-versed in optimization, statistics and stochastic modeling.
 
 ## Innovation and Problem-Solving
 
