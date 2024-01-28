@@ -1,8 +1,8 @@
 ---
 title: About
 seo:
-  title: About Me
-  description: Learn more about the person behind the website and embark on a journey of inspiration and shared experiences.
+  title: About Yikai Wang UNC
+  description: Learn more about Yikai Wang at UNC.
   image:
     src: '/about.jpeg'
     alt: A person sitting at a desk in front of a computer
@@ -11,26 +11,25 @@ seo:
 
 ## Yikai Wang ---- Ph.D. Student at UNC
 
-**Greetings!**   
-I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.   
+**Greetings!**
+I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.
 My research interest lies in large language models, adversarial attack and reinforcement learning.
 
 ## Education Background
 
-- **University of North Carolina at Chapel Hill**  &emsp; *2023- present*  
-Ph.D. in [Statistics and Operations Research](https://stor.unc.edu/)
-- **Zhejiang University, China**  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; *2019-2023*  
+- **University of North Carolina at Chapel Hill**  &emsp; *2023- present*Ph.D. in [Statistics and Operations Research](https://stor.unc.edu/)
+- **Zhejiang University, China**  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; *2019-2023*
   B.S. in [Computer Science](http://www.en.cs.zju.edu.cn/)
 
 ## Experiences
 
-- Internship at [Hundsun Technologies Inc.](https://en.hundsun.com/)  &emsp; 2022  
-Data Risk R&D Management Department
+- Internship at [Hundsun Technologies Inc.](https://en.hundsun.com/)  &emsp; 2022Data Risk R&D Management Department
 - Teaching Assistant
+
 ```
 2023 Fall: STOR 113 
     Decision Models for Business and Economics
-    
+  
 2024 Spring: STOR 455 
     Methods of Data Analysis
 ```
