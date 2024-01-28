@@ -101,8 +101,8 @@ const siteConfig: SiteConfig = {
         I received B.S. degree in Computer Science at Zhejiang University, China.\
         My research interest lies in large language models, adversarial attack and reinforcement learning.",
         image: {
-            src: '/hero.jpeg',
-            alt: 'A person sitting at a desk in front of a computer'
+            src: '/homepage.jpg',
+            alt: 'Yikai and his family'
         },
         actions: [
             {

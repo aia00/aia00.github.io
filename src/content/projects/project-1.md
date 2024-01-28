@@ -1,7 +1,7 @@
 ---
 title: SongDriver Real-time Music Accompaniment Generation without Logical Latency nor Exposure Bias
-description: Published at ACM MM 2023.
-publishDate: 'Jan 25 2024'
+description: Published at ACM Multimedia 2023  
+publishDate: 'Oct 13 2022'
 isFeatured: true
 seo:
   image:
@@ -9,7 +9,7 @@ seo:
 ---
 ![Project preview](/papers/project-1.jpg)
 
-**Note:** This case study is entirely fictional and created for the purpose of showcasing [Dante Astro.js theme functionality](https://justgoodui.com/astro-themes/dante/).
+**Authors:** Zihao Wang, Qihao Liang, Kejun Zhang, Yuxing Wang, Chen Zhang, Pengfei Yu, Yongsheng Feng, Wenbo Liu, Yikai Wang, Yuntai Bao, Yiheng Yang
 
 **Project Overview:**
 CryptoTrader Dashboard is a comprehensive web application designed to empower cryptocurrency enthusiasts with tools to manage and optimize their digital asset portfolios. By providing real-time market data, analytics, and portfolio tracking, the dashboard offers a seamless experience for users to monitor and enhance their cryptocurrency investments.
