@@ -9,9 +9,10 @@ seo:
 ---
 ![Alt text for image](/homepage.jpg)
 
-## Yikai Wang- Ph.D. Student at UNC
+## Yikai Wang ---- Ph.D. Student at UNC
 
-**Greetings!** I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.   
+**Greetings!**   
+I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.   
 My research interest lies in large language models, adversarial attack and reinforcement learning.
 
 ## Education Background
@@ -26,10 +27,13 @@ Ph.D. in [Statistics and Operations Research](https://stor.unc.edu/)
 - Internship at [Hundsun Technologies Inc.](https://en.hundsun.com/)  &emsp; 2022  
 Data Risk R&D Management Department
 - Teaching Assistant
-| Semester | Courses |Description|
-| ----------- | ----------- |----|
-| 2023 Fall | STOR 113| Decision Models for Business and Economics|
-| 2024 Spring | STOR 455| Methods of Data Analysis |
+```
+2023 Fall: STOR 113 
+    Decision Models for Business and Economics
+    
+2024 Spring: STOR 455 
+    Methods of Data Analysis
+```
 
 ## Skills and Expertise
 
