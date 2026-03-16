@@ -97,12 +97,14 @@ const siteConfig: SiteConfig = {
     ],
     hero: {
         title: 'Welcome to My Homepage!',
-        text: "I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.\
-        I received B.S. degree in Computer Science at Zhejiang University, China.\
-        My research interest lies in large language models, adversarial attack and reinforcement learning.",
+        text: [
+            "I'm Yikai Wang, currently pursuing a Ph.D. degree in the Statistics and Operations Research Department (STOR) at the University of North Carolina at Chapel Hill (UNC).",
+            'I received my B.S. degree in Computer Science from Zhejiang University, China.',
+            'My research interests include large language models, adversarial attacks, and reinforcement learning.'
+        ].join('\n\n'),
         image: {
             src: '/homepage.jpg',
-            alt: 'Yikai and his family'
+            alt: 'Yikai selfie'
         },
         actions: [
             {

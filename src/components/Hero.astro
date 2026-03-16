@@ -10,13 +10,17 @@ const hero = siteConfig.hero;
     (hero?.title || hero?.image?.src || hero?.text || (hero?.actions && hero.actions.length > 0)) && (
         <section class="w-full flex flex-col gap-8 mb-16 sm:mb-24">
             {hero.title && <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight">{hero.title}</h1>}
-            {hero.image?.src && (
-                <figure>
-                    <img class="w-full" src={hero.image.src} loading="lazy" decoding="async" alt={hero.image.alt || ''} />
-                    {hero.image.caption && <figcaption class="mt-1.5 text-xs sm:text-sm">{hero.image.caption}</figcaption>}
-                </figure>
+            {(hero.image?.src || hero.text) && (
+                <div class="flex flex-col gap-6 md:flex-row md:items-start md:gap-10">
+                    {hero.image?.src && (
+                        <figure class="w-full max-w-[180px] sm:max-w-[220px] md:max-w-[220px] lg:max-w-[240px] shrink-0">
+                            <img class="w-full" src={hero.image.src} loading="lazy" decoding="async" alt={hero.image.alt || ''} />
+                            {hero.image.caption && <figcaption class="mt-1.5 text-xs sm:text-sm">{hero.image.caption}</figcaption>}
+                        </figure>
+                    )}
+                    {hero.text && <div class="max-w-none prose prose-dante sm:prose-lg md:flex-1" set:html={marked.parse(hero.text)} />}
+                </div>
             )}
-            {hero.text && <div class="max-w-none prose prose-dante sm:prose-lg" set:html={marked.parse(hero.text)} />}
             {hero.actions && hero.actions.length > 0 && (
                 <div class="flex flex-wrap gap-4">
                     {hero.actions.map((action) => (

@@ -12,8 +12,8 @@ seo:
 ## Yikai Wang ---- Ph.D. Student at UNC
 
 **Greetings!**
-I'm Yikai Wang, currently persuing Ph.D. in Statistics and Operations Research Department, University of North Carolina at Chapel Hill.
-My research interest lies in large language models, adversarial attack and reinforcement learning.
+I'm Yikai Wang, currently persuing Ph.D. degree in Statistics and Operations Research Department, University of North Carolina at Chapel Hill (UNC).
+My research interest lies in large language models,reinforcement learning, optimization.
 
 ## Education Background
 
