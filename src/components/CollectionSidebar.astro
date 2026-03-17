@@ -1,0 +1,57 @@
+---
+type Item = {
+    label: string;
+    href: string;
+    isActive?: boolean;
+};
+
+type Props = {
+    title?: string;
+    items?: Item[];
+};
+
+const { title = 'Browse', items = [] } = Astro.props;
+---
+
+<aside
+    class="hidden xl:block xl:w-56 xl:shrink-0 transition-opacity duration-200 opacity-45 hover:opacity-100 focus-within:opacity-100"
+    aria-label="Collection navigation"
+>
+    <div class="collection-sidebar-panel overflow-y-auto pr-2">
+        <p class="mb-4 font-serif text-lg italic">{title}</p>
+        <nav aria-label={title}>
+            <ol class="space-y-2 text-sm">
+                {
+                    items.map((item) => (
+                        <li>
+                            <a
+                                href={item.href}
+                                aria-current={item.isActive ? 'page' : undefined}
+                                class:list={[
+                                    'block border-l pl-3 leading-relaxed transition',
+                                    item.isActive
+                                        ? 'border-main font-medium text-main'
+                                        : 'border-transparent text-main/65 hover:border-main/30 hover:text-main'
+                                ]}
+                            >
+                                {item.label}
+                            </a>
+                        </li>
+                    ))
+                }
+            </ol>
+        </nav>
+    </div>
+</aside>
+
+<style>
+    @media (min-width: 1280px) {
+        .collection-sidebar-panel {
+            position: fixed;
+            top: 7rem;
+            left: max(1.5rem, calc(50vw - 42rem));
+            width: 14rem;
+            max-height: calc(100vh - 8.5rem);
+        }
+    }
+</style>

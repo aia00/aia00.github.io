@@ -1,0 +1,75 @@
+---
+import type { GetStaticPathsOptions, Page } from 'astro';
+import { type CollectionEntry, getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CollectionSidebar from '../../components/CollectionSidebar.astro';
+import Pagination from '../../components/Pagination.astro';
+import PostPreview from '../../components/PostPreview.astro';
+import siteConfig from '../../data/site-config';
+import { sortItemsByDateDesc } from '../../utils/data-utils';
+
+export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+    const notes = ((await getCollection('notes')) ?? []).sort(sortItemsByDateDesc);
+    if (notes.length === 0) {
+        return [
+            {
+                params: { page: undefined },
+                props: {
+                    page: {
+                        data: [],
+                        currentPage: 1,
+                        lastPage: 1,
+                        size: siteConfig.postsPerPage || 4,
+                        total: 0,
+                        start: 0,
+                        end: 0,
+                        url: {
+                            current: '/notes/',
+                            prev: undefined,
+                            next: undefined,
+                            first: '/notes/',
+                            last: '/notes/'
+                        }
+                    }
+                }
+            }
+        ];
+    }
+
+    return paginate(notes, { pageSize: siteConfig.postsPerPage || 4 });
+}
+
+type Props = { page: Page<CollectionEntry<'notes'>> };
+
+const { page } = Astro.props;
+const notes = page.data;
+const allNotes = ((await getCollection('notes')) ?? []).sort(sortItemsByDateDesc);
+---
+
+<BaseLayout
+    title="Notes"
+    description="Personal notes, reflections, and life writing."
+    image={{ src: '/unc-preview.jpg', alt: 'UNC logo' }}
+    showHeader={false}
+    showToc={false}
+>
+    <CollectionSidebar
+        slot="toc"
+        title="All Notes"
+        items={allNotes.map((note) => ({
+            label: note.data.title,
+            href: `/notes/${note.slug}/`
+        }))}
+    />
+    <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">Notes</h1>
+    {
+        notes.length > 0 ? (
+            <>
+                {notes.map((note) => <PostPreview post={note} basePath="/notes" class="mb-10 sm:mb-12" />)}
+                <Pagination page={page} class="my-16 sm:my-24" />
+            </>
+        ) : (
+            <p class="text-base leading-relaxed sm:text-lg">No notes yet.</p>
+        )
+    }
+</BaseLayout>

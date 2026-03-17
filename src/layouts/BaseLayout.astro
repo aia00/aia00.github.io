@@ -10,6 +10,8 @@ export type Props = HeadProps & { showHeader?: boolean; showToc?: boolean };
 
 const { showHeader = true, showToc = true, ...head } = Astro.props;
 const hasRail = Astro.slots.has('rail');
+const hasTocSlot = Astro.slots.has('toc');
+const hasLeftSidebar = hasTocSlot || showToc;
 ---
 
 <!doctype html>
@@ -28,8 +30,8 @@ const hasRail = Astro.slots.has('rail');
             <Nav />
             {showHeader && <Header />}
             <div class:list={['grow w-full max-w-7xl mx-auto xl:flex xl:items-start', hasRail ? 'xl:gap-8' : 'xl:gap-12']}>
-                {showToc && <PageToc />}
-                <main class="grow w-full min-w-0 max-w-3xl mx-auto xl:mx-0">
+                {hasTocSlot ? <slot name="toc" /> : showToc && <PageToc />}
+                <main class:list={['grow w-full min-w-0 max-w-3xl mx-auto', (hasLeftSidebar || hasRail) && 'xl:mx-0']}>
                     <slot />
                 </main>
                 {hasRail && <slot name="rail" />}
