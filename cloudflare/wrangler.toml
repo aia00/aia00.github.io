@@ -1,0 +1,10 @@
+name = "aia00-site-analytics"
+main = "analytics-worker.js"
+compatibility_date = "2026-03-17"
+
+kv_namespaces = [
+  { binding = "SITE_ANALYTICS", id = "ccefe633bb2e45e2bc993c82df93d0e4" }
+]
+
+[vars]
+ALLOWED_ORIGIN = "https://aia00.github.io"

@@ -1,0 +1,153 @@
+---
+type PopularBlogMeta = {
+    slug: string;
+    title: string;
+    excerpt?: string;
+    dateLabel: string;
+};
+
+type Props = {
+    posts: PopularBlogMeta[];
+};
+
+const { posts } = Astro.props;
+const analyticsEndpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT || '').trim();
+const fallbackPosts = (posts || []).slice(0, 5);
+---
+
+<section class="mb-16 sm:mb-24" data-popular-blogs>
+    <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Blogs</h2>
+    <div data-popular-blogs-list>
+        {
+            fallbackPosts.length > 0 ? (
+                fallbackPosts.map((post) => (
+                    <a class="mb-10 flex items-start justify-between gap-8 group sm:mb-12" href={`/blog/${post.slug}/`}>
+                        <div class="grow">
+                            <h3 class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-1 group-hover:decoration-dashed group-hover:underline-offset-4 sm:text-2xl">
+                                {post.title}
+                            </h3>
+                            <div class="mt-1 text-sm leading-normal">{post.dateLabel}</div>
+                            {post.excerpt && <div class="mt-3 text-sm leading-normal">{post.excerpt}</div>}
+                        </div>
+                        <div class="hidden shrink-0 items-center gap-1 font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex">
+                            Read Post <span aria-hidden="true">→</span>
+                        </div>
+                    </a>
+                ))
+            ) : (
+                <p class="text-base leading-relaxed sm:text-lg">No blog posts right now.</p>
+            )
+        }
+    </div>
+    <p data-popular-blogs-empty class="hidden text-base leading-relaxed sm:text-lg">No tracked blog views yet.</p>
+    <div data-popular-blogs-actions class="mt-12 sm:mt-16">
+        <a
+            href="/blog"
+            class="inline-flex items-center rounded-full border border-main px-5 py-2 text-sm font-medium transition hover:bg-muted"
+        >
+            View All Blogs
+        </a>
+    </div>
+</section>
+
+<script is:inline define:vars={{ analyticsEndpoint, posts }}>
+    (() => {
+        const endpoint = analyticsEndpoint?.replace(/\/+$/, '');
+        const section = document.querySelector('[data-popular-blogs]');
+        const list = section?.querySelector('[data-popular-blogs-list]');
+        const emptyState = section?.querySelector('[data-popular-blogs-empty]');
+        const actions = section?.querySelector('[data-popular-blogs-actions]');
+        const postMap = new Map((posts || []).map((post) => [post.slug, post]));
+
+        if (!section || !list || !emptyState || !actions) {
+            return;
+        }
+
+        function escapeHtml(value = '') {
+            return value
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function render(items) {
+            if (!items.length) {
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            actions.classList.remove('hidden');
+            section.classList.remove('hidden');
+
+            list.innerHTML = items
+                .map(
+                    (item) => `
+                        <a class="mb-10 flex items-start justify-between gap-8 group sm:mb-12" href="/blog/${item.slug}/">
+                            <div class="grow">
+                                <h3 class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-1 group-hover:decoration-dashed group-hover:underline-offset-4 sm:text-2xl">
+                                    ${escapeHtml(item.title)}
+                                </h3>
+                                <div class="mt-1 text-sm leading-normal">
+                                    ${escapeHtml(item.dateLabel)}
+                                    <span class="ml-3 opacity-70">${item.views} views</span>
+                                </div>
+                                ${
+                                    item.excerpt
+                                        ? `<div class="mt-3 text-sm leading-normal">${escapeHtml(item.excerpt)}</div>`
+                                        : ''
+                                }
+                            </div>
+                            <div class="hidden shrink-0 items-center gap-1 font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex">
+                                Read Post <span aria-hidden="true">→</span>
+                            </div>
+                        </a>
+                    `
+                )
+                .join('');
+        }
+
+        if (!endpoint) {
+            return;
+        }
+
+        async function loadPopularBlogs() {
+            try {
+                const response = await fetch(`${endpoint}/top-blogs?limit=5`, { mode: 'cors' });
+                if (!response.ok) {
+                    throw new Error(`Popular blog request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                const items = (data.items || [])
+                    .map((item) => {
+                        const post = postMap.get(item.slug);
+                        if (!post) {
+                            return null;
+                        }
+
+                        return {
+                            ...post,
+                            views: Number(item.views || 0)
+                        };
+                    })
+                    .filter(Boolean);
+
+                if (items.length > 0) {
+                    render(items);
+                }
+            } catch {
+                // Keep the server-rendered fallback list if analytics is unavailable.
+            }
+        }
+
+        if (window.__loadPopularBlogsHandler) {
+            document.removeEventListener('astro:page-load', window.__loadPopularBlogsHandler);
+        }
+
+        window.__loadPopularBlogsHandler = loadPopularBlogs;
+        document.addEventListener('astro:page-load', window.__loadPopularBlogsHandler);
+        loadPopularBlogs();
+    })();
+</script>

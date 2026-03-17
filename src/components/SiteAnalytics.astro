@@ -1,0 +1,119 @@
+---
+const analyticsEndpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT || '').trim();
+---
+
+<script is:inline define:vars={{ analyticsEndpoint }}>
+    (() => {
+        const endpoint = analyticsEndpoint?.replace(/\/+$/, '');
+        const TRACK_WINDOW_MS = 30 * 60 * 1000;
+
+        if (!endpoint) {
+            return;
+        }
+
+        function getPagePayload(pathname) {
+            const segments = pathname.split('/').filter(Boolean);
+
+            if (segments.length === 0) {
+                return { pageType: 'home' };
+            }
+
+            const [first, second] = segments;
+
+            if (first === 'blog') {
+                return second ? { pageType: 'blog', slug: second } : { pageType: 'blog-index' };
+            }
+
+            if (first === 'notes') {
+                return second ? { pageType: 'note', slug: second } : { pageType: 'notes-index' };
+            }
+
+            if (first === 'projects') {
+                return second ? { pageType: 'project', slug: second } : { pageType: 'projects-index' };
+            }
+
+            if (first === 'tags') {
+                return second ? { pageType: 'tag', slug: second } : { pageType: 'tags-index' };
+            }
+
+            return { pageType: 'page', slug: segments.join('/') };
+        }
+
+        function shouldTrack(pathname) {
+            return pathname && !pathname.startsWith('/rss.xml') && !pathname.startsWith('/sitemap');
+        }
+
+        function alreadyTrackedRecently(pathname) {
+            try {
+                const storageKey = `site-analytics:view:${pathname}`;
+                const raw = window.localStorage.getItem(storageKey);
+                const lastTrackedAt = raw ? Number(raw) : 0;
+
+                if (lastTrackedAt && Date.now() - lastTrackedAt < TRACK_WINDOW_MS) {
+                    return true;
+                }
+
+                window.localStorage.setItem(storageKey, String(Date.now()));
+                return false;
+            } catch {
+                return false;
+            }
+        }
+
+        let lastTrackedPath = '';
+
+        function trackPageView() {
+            const pathname = window.location.pathname;
+
+            if (!shouldTrack(pathname)) {
+                return;
+            }
+
+            if (navigator.doNotTrack === '1' || window.doNotTrack === '1') {
+                return;
+            }
+
+            if (pathname === lastTrackedPath || alreadyTrackedRecently(pathname)) {
+                lastTrackedPath = pathname;
+                return;
+            }
+
+            lastTrackedPath = pathname;
+
+            const payload = {
+                path: pathname,
+                referrer: document.referrer || undefined,
+                ...getPagePayload(pathname)
+            };
+
+            const body = JSON.stringify(payload);
+            const url = `${endpoint}/track`;
+
+            try {
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([body], { type: 'application/json' });
+                    navigator.sendBeacon(url, blob);
+                    return;
+                }
+            } catch {
+                // Fall back to fetch below.
+            }
+
+            fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                headers: { 'Content-Type': 'application/json' },
+                body,
+                keepalive: true
+            }).catch(() => {});
+        }
+
+        if (window.__siteAnalyticsHandler) {
+            document.removeEventListener('astro:page-load', window.__siteAnalyticsHandler);
+        }
+
+        window.__siteAnalyticsHandler = trackPageView;
+        document.addEventListener('astro:page-load', window.__siteAnalyticsHandler);
+        trackPageView();
+    })();
+</script>

@@ -3,12 +3,24 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import Hero from '../components/Hero.astro';
+import PopularBlogs from '../components/PopularBlogs.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
 
+const blogPosts = ((await getCollection('blog')) ?? []).sort(sortItemsByDateDesc);
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
 const featuredProjects = projects.filter(({ data }) => data.isFeatured).slice(0, 5);
+const popularBlogMetadata = blogPosts.map((post) => ({
+    slug: post.slug,
+    title: post.data.title,
+    excerpt: post.data.excerpt ?? '',
+    dateLabel: post.data.publishDate.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    })
+}));
 
 const description = 'Personal website of Yikai Wang, a Ph.D. student in Statistics and Operations Research at UNC Chapel Hill.';
 
@@ -63,6 +75,7 @@ const teachingItems = [
             </div>
         )
     }
+    <PopularBlogs posts={popularBlogMetadata} />
     {
         teachingItems.length > 0 && (
             <section class="mb-16 sm:mb-24">
