@@ -69,11 +69,6 @@ If prompts from different task families are not well separated in that space, th
 
 The experiments support exactly this diagnosis. The authors take embeddings from the penultimate layer and train a classifier to predict the task type. The task classification accuracy is only slightly above random guessing in the multi-task environments considered. That means the representation is already too entangled before the final prediction stage.
 
-<figure style="margin: 1.5rem 0;">
-  <img src="/papers/agentic-standalone-models.jpg" alt="Standalone models comparison" style="display:block; width:100%; max-width:760px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The model comparison further shows that this is not just a small-model issue. Off-the-shelf standalone LLMs also remain weak in the same multi-task setting.</em></figcaption>
-</figure>
-
 ## 4. Why Standard Pre-training and Post-training Do Not Fix the Problem
 
 The paper then makes a stronger claim: the failure is not repaired by the usual training upgrades.
@@ -140,13 +135,17 @@ This is a very nice result because it turns the representation argument into som
 
 ## 8. Why This Paper Matters
 
-The paper matters because it upgrades a common intuition into a concrete technical statement. People often say agentic systems are better for analytics because they can plan and use tools. This work explains **why** standalone inference is weak even before planning and tools are added.
+The main value of this paper is that it turns a vague engineering intuition into a much sharper diagnosis. People often say "agents work better for analytics," but that statement by itself is too loose. This paper argues that the real bottleneck is **task identification inside the latent representation** of a standalone model.
 
-The central message is:
+That is a much more specific claim than "agents can use tools." The paper says that when many task families are mixed together, one-shot standalone inference fails because the model does not cleanly separate task identity before making the final prediction. Once that separation fails, no amount of clever prompting at inference time is likely to rescue the downstream answer consistently.
+
+The auxiliary-loss experiments are important for exactly that reason. They are not presented as a production replacement for agents; they act as a diagnostic intervention. When task separation is explicitly rewarded during training, standalone performance improves. That strengthens the paper's causal story that the core failure mode is representational rather than merely due to insufficient scale or weak post-training.
+
+The concrete takeaway is:
 
 1. multi-task analytics requires implicit task identification;
 2. standard standalone LLM training does not encourage clean task separation in representation space;
 3. therefore standalone inference remains structurally limited;
 4. agentic design is the practical answer, unless one is willing to redesign pre-training itself.
 
-That last point is important. The paper is not saying standalone inference is impossible. It is saying that making it truly competitive would require a different training pipeline than the one most LLMs use today. For actual data-analytics systems, agentic design is therefore the more realistic engineering path.
+So this is not just a benchmark paper saying "agentic is better." It is a representation-learning argument about **why** the gap appears and why analytics workloads are a particularly bad fit for a one-pass standalone pipeline.

@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">Congestion feedback loops for Linux and NIC algorithms</title>
+  <desc id="desc">A diagram showing queue growth, feedback signals, control algorithms, and resulting transmission actions.</desc>
+  <rect width="1200" height="520" fill="#f6f3ea"/>
+
+  <rect x="70" y="140" width="240" height="120" rx="18" fill="#7a4f2a"/>
+  <text x="190" y="190" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Queues Build Up</text>
+  <text x="190" y="220" font-family="Arial, sans-serif" font-size="18" fill="#ffe8d5" text-anchor="middle">qdisc backlog</text>
+  <text x="190" y="246" font-family="Arial, sans-serif" font-size="18" fill="#ffe8d5" text-anchor="middle">NIC ring pressure</text>
+
+  <rect x="360" y="92" width="230" height="84" rx="14" fill="#31525b"/>
+  <text x="475" y="126" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">Loss</text>
+  <text x="475" y="152" font-family="Arial, sans-serif" font-size="18" fill="#d8fbff" text-anchor="middle">tail drop, RTO, dup ACKs</text>
+
+  <rect x="360" y="214" width="230" height="84" rx="14" fill="#4e6e58"/>
+  <text x="475" y="248" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">ECN Marks</text>
+  <text x="475" y="274" font-family="Arial, sans-serif" font-size="18" fill="#e1f7df" text-anchor="middle">switch or queue marking</text>
+
+  <rect x="360" y="336" width="230" height="84" rx="14" fill="#5b4a7a"/>
+  <text x="475" y="370" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">RTT Inflation</text>
+  <text x="475" y="396" font-family="Arial, sans-serif" font-size="18" fill="#efe5ff" text-anchor="middle">queueing delay, min RTT gap</text>
+
+  <rect x="660" y="92" width="220" height="84" rx="14" fill="#293241"/>
+  <text x="770" y="126" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">CUBIC</text>
+  <text x="770" y="152" font-family="Arial, sans-serif" font-size="18" fill="#dfe9ff" text-anchor="middle">loss-driven TCP growth</text>
+
+  <rect x="660" y="214" width="220" height="84" rx="14" fill="#1d5c63"/>
+  <text x="770" y="248" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">DCTCP / DCQCN</text>
+  <text x="770" y="274" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">ECN-sensitive reduction</text>
+
+  <rect x="660" y="336" width="220" height="84" rx="14" fill="#455d7a"/>
+  <text x="770" y="370" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">BBR</text>
+  <text x="770" y="396" font-family="Arial, sans-serif" font-size="18" fill="#e2ebff" text-anchor="middle">model of bw + RTprop</text>
+
+  <rect x="948" y="140" width="190" height="120" rx="18" fill="#8d3b3b"/>
+  <text x="1043" y="186" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Actuation</text>
+  <text x="1043" y="216" font-family="Arial, sans-serif" font-size="18" fill="#ffe3e3" text-anchor="middle">cwnd change</text>
+  <text x="1043" y="242" font-family="Arial, sans-serif" font-size="18" fill="#ffe3e3" text-anchor="middle">pacing rate</text>
+
+  <line x1="310" y1="200" x2="360" y2="134" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="360,134 345,138 357,149" fill="#1f1f1f"/>
+  <line x1="310" y1="200" x2="360" y2="256" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="360,256 346,250 358,240" fill="#1f1f1f"/>
+  <line x1="310" y1="200" x2="360" y2="378" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="360,378 350,366 365,362" fill="#1f1f1f"/>
+
+  <line x1="590" y1="134" x2="660" y2="134" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="660,134 644,126 644,142" fill="#1f1f1f"/>
+  <line x1="590" y1="256" x2="660" y2="256" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="660,256 644,248 644,264" fill="#1f1f1f"/>
+  <line x1="590" y1="378" x2="660" y2="378" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="660,378 644,370 644,386" fill="#1f1f1f"/>
+
+  <line x1="880" y1="134" x2="948" y2="176" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="948,176 932,173 940,160" fill="#1f1f1f"/>
+  <line x1="880" y1="256" x2="948" y2="200" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="948,200 932,203 942,214" fill="#1f1f1f"/>
+  <line x1="880" y1="378" x2="948" y2="224" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="948,224 936,235 951,240" fill="#1f1f1f"/>
+
+  <path d="M1043 260 C1040 350, 860 462, 540 462 C310 462, 184 392, 184 260" fill="none" stroke="#b56a2b" stroke-width="6" stroke-dasharray="14 10"/>
+  <text x="666" y="494" font-family="Arial, sans-serif" font-size="20" fill="#7a4f2a" text-anchor="middle">Control reduces sending pressure, which should drain queues and stabilize latency.</text>
+</svg>

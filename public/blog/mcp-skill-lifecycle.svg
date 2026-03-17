@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">Lifecycle of a skill-guided MCP task</title>
+  <desc id="desc">A flow diagram showing task detection, skill selection, MCP discovery, execution, verification, and output.</desc>
+  <defs>
+    <linearGradient id="bg2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#eef5ea"/>
+      <stop offset="100%" stop-color="#f5ebe3"/>
+    </linearGradient>
+    <style>
+      .h { font: 700 30px Georgia, serif; fill: #1e2b24; }
+      .t { font: 600 22px Georgia, serif; fill: #22332a; }
+      .s { font: 500 17px Georgia, serif; fill: #36473d; }
+      .box { rx: 20; ry: 20; stroke: #304036; stroke-width: 3; }
+      .arrow { stroke: #304036; stroke-width: 4; fill: none; marker-end: url(#am); }
+    </style>
+    <marker id="am" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#304036"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="700" fill="url(#bg2)"/>
+  <text x="70" y="80" class="h">A practical execution loop for Skills and MCP</text>
+
+  <rect x="75" y="150" width="190" height="110" class="box" fill="#fffdf7"/>
+  <text x="108" y="203" class="t">1. Detect task</text>
+  <text x="102" y="235" class="s">classify request type</text>
+
+  <rect x="320" y="150" width="230" height="110" class="box" fill="#eff4ff"/>
+  <text x="352" y="203" class="t">2. Load Skill</text>
+  <text x="350" y="235" class="s">instructions, scripts, rules</text>
+
+  <rect x="610" y="150" width="240" height="110" class="box" fill="#f9efe7"/>
+  <text x="640" y="203" class="t">3. Discover MCP</text>
+  <text x="642" y="235" class="s">tools, resources, prompts</text>
+
+  <rect x="905" y="150" width="220" height="110" class="box" fill="#fff9dc"/>
+  <text x="940" y="203" class="t">4. Execute</text>
+  <text x="938" y="235" class="s">typed calls to systems</text>
+
+  <rect x="220" y="400" width="250" height="120" class="box" fill="#fffdf7"/>
+  <text x="265" y="455" class="t">5. Verify result</text>
+  <text x="253" y="488" class="s">check logs, files, tests, output</text>
+
+  <rect x="540" y="390" width="250" height="140" class="box" fill="#eef7ef"/>
+  <text x="582" y="445" class="t">6. Ask or retry</text>
+  <text x="575" y="478" class="s">missing data, auth, approvals</text>
+  <text x="612" y="506" class="s">or failure path</text>
+
+  <rect x="855" y="400" width="245" height="120" class="box" fill="#e9f1fb"/>
+  <text x="900" y="455" class="t">7. Final output</text>
+  <text x="888" y="488" class="s">artifact, summary, next step</text>
+
+  <path d="M265 205 L315 205" class="arrow"/>
+  <path d="M550 205 L605 205" class="arrow"/>
+  <path d="M850 205 L900 205" class="arrow"/>
+  <path d="M1010 260 L1010 360" class="arrow"/>
+  <path d="M905 460 L795 460" class="arrow"/>
+  <path d="M540 460 L475 460" class="arrow"/>
+  <path d="M345 400 L345 280" class="arrow"/>
+  <path d="M665 390 L665 280" class="arrow"/>
+
+  <text x="80" y="610" class="s">Design principle: let MCP handle capability exposure, and let the Skill define the preferred execution policy.</text>
+</svg>

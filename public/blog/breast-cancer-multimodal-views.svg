@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">Three complementary views of a breast tumor</title>
+  <desc id="desc">A schematic showing H and E morphology, ER immunohistochemistry, and PAM50 gene expression as three complementary views of the same breast tumor.</desc>
+  <rect width="1200" height="640" fill="#f7f3ec"/>
+
+  <rect x="80" y="70" width="1040" height="90" rx="18" fill="#5b2333"/>
+  <text x="600" y="118" font-family="Georgia, serif" font-size="38" fill="#ffffff" text-anchor="middle">One breast tumor, three biological readouts</text>
+  <text x="600" y="146" font-family="Arial, sans-serif" font-size="20" fill="#ffe6ee" text-anchor="middle">Morphology, protein expression, and transcriptomic subtype overlap, but they are not the same thing.</text>
+
+  <rect x="90" y="220" width="300" height="270" rx="18" fill="#e2c6d6" stroke="#5b2333" stroke-width="3"/>
+  <text x="240" y="266" font-family="Georgia, serif" font-size="34" fill="#4b2230" text-anchor="middle">H&amp;E</text>
+  <text x="240" y="298" font-family="Arial, sans-serif" font-size="20" fill="#4b2230" text-anchor="middle">hematoxylin + eosin</text>
+  <text x="240" y="340" font-family="Arial, sans-serif" font-size="21" fill="#4b2230" text-anchor="middle">Shows</text>
+  <text x="240" y="372" font-family="Arial, sans-serif" font-size="19" fill="#4b2230" text-anchor="middle">architecture, grade, nuclei, stroma,</text>
+  <text x="240" y="400" font-family="Arial, sans-serif" font-size="19" fill="#4b2230" text-anchor="middle">mitoses, necrosis, lymphocytes</text>
+  <text x="240" y="442" font-family="Arial, sans-serif" font-size="21" fill="#4b2230" text-anchor="middle">Best thought of as</text>
+  <text x="240" y="474" font-family="Arial, sans-serif" font-size="19" fill="#4b2230" text-anchor="middle">tumor phenotype and tissue context</text>
+
+  <rect x="450" y="220" width="300" height="270" rx="18" fill="#c9dde8" stroke="#28536b" stroke-width="3"/>
+  <text x="600" y="266" font-family="Georgia, serif" font-size="34" fill="#173646" text-anchor="middle">ER IHC</text>
+  <text x="600" y="298" font-family="Arial, sans-serif" font-size="20" fill="#173646" text-anchor="middle">estrogen receptor protein stain</text>
+  <text x="600" y="340" font-family="Arial, sans-serif" font-size="21" fill="#173646" text-anchor="middle">Shows</text>
+  <text x="600" y="372" font-family="Arial, sans-serif" font-size="19" fill="#173646" text-anchor="middle">nuclear ER expression in tumor cells</text>
+  <text x="600" y="400" font-family="Arial, sans-serif" font-size="19" fill="#173646" text-anchor="middle">and spatial heterogeneity of staining</text>
+  <text x="600" y="442" font-family="Arial, sans-serif" font-size="21" fill="#173646" text-anchor="middle">Best thought of as</text>
+  <text x="600" y="474" font-family="Arial, sans-serif" font-size="19" fill="#173646" text-anchor="middle">a direct clinical biomarker assay</text>
+
+  <rect x="810" y="220" width="300" height="270" rx="18" fill="#d9e6cb" stroke="#4f6b34" stroke-width="3"/>
+  <text x="960" y="266" font-family="Georgia, serif" font-size="34" fill="#31442c" text-anchor="middle">PAM50</text>
+  <text x="960" y="298" font-family="Arial, sans-serif" font-size="20" fill="#31442c" text-anchor="middle">gene-expression subtype</text>
+  <text x="960" y="340" font-family="Arial, sans-serif" font-size="21" fill="#31442c" text-anchor="middle">Shows</text>
+  <text x="960" y="372" font-family="Arial, sans-serif" font-size="19" fill="#31442c" text-anchor="middle">luminal, HER2, basal, and</text>
+  <text x="960" y="400" font-family="Arial, sans-serif" font-size="19" fill="#31442c" text-anchor="middle">proliferation programs at RNA level</text>
+  <text x="960" y="442" font-family="Arial, sans-serif" font-size="21" fill="#31442c" text-anchor="middle">Best thought of as</text>
+  <text x="960" y="474" font-family="Arial, sans-serif" font-size="19" fill="#31442c" text-anchor="middle">intrinsic molecular subtype</text>
+
+  <line x1="390" y1="355" x2="450" y2="355" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="450,355 434,347 434,363" fill="#1f1f1f"/>
+  <line x1="750" y1="355" x2="810" y2="355" stroke="#1f1f1f" stroke-width="4"/>
+  <polygon points="810,355 794,347 794,363" fill="#1f1f1f"/>
+
+  <rect x="150" y="522" width="900" height="82" rx="14" fill="#ffffff" stroke="#87776c" stroke-width="2"/>
+  <text x="600" y="558" font-family="Arial, sans-serif" font-size="20" fill="#40352d" text-anchor="middle">Multimodal modeling works because morphology, receptor protein,</text>
+  <text x="600" y="585" font-family="Arial, sans-serif" font-size="20" fill="#40352d" text-anchor="middle">and transcriptomic programs are correlated but not interchangeable.</text>
+</svg>

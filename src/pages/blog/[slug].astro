@@ -3,6 +3,7 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Button from '../../components/Button.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import PageRail from '../../components/PageRail.astro';
 import PostPreview from '../../components/PostPreview.astro';
 import Subscribe from '../../components/Subscribe.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
@@ -27,9 +28,27 @@ const { href } = Astro.url;
 const { post, prevPost, nextPost } = Astro.props;
 const { title, publishDate, updatedDate, excerpt, tags = [], seo } = post.data;
 const { Content } = await post.render();
+const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+const readingMinutes = Math.max(1, Math.ceil((post.body || '').trim().split(/\s+/).filter(Boolean).length / 220));
 ---
 
 <BaseLayout title={seo?.title ?? title} description={seo?.description ?? excerpt} image={seo?.image} pageType="article" showHeader={false}>
+    <PageRail
+        slot="rail"
+        eyebrow="Article"
+        summary={excerpt}
+        items={[
+            { label: 'Published', value: formatDate(publishDate) },
+            ...(updatedDate ? [{ label: 'Updated', value: formatDate(updatedDate) }] : []),
+            { label: 'Reading time', value: `${readingMinutes} min` }
+        ]}
+        tags={tags.map((tag) => ({ label: `#${tag}`, href: `/tags/${slugify(tag)}` }))}
+    />
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight">{title}</h1>

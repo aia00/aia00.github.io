@@ -1,0 +1,91 @@
+---
+type RailItem = {
+    label: string;
+    value: string;
+};
+
+type RailTag = {
+    label: string;
+    href?: string;
+};
+
+type Props = {
+    eyebrow?: string;
+    summary?: string;
+    items?: RailItem[];
+    tags?: RailTag[];
+};
+
+const { eyebrow, summary, items = [], tags = [] } = Astro.props;
+---
+
+<aside
+    class="hidden xl:block xl:w-72 xl:shrink-0 transition-opacity duration-200 opacity-45 hover:opacity-100 focus-within:opacity-100"
+    aria-label="Page metadata"
+>
+    <div class="page-rail-panel space-y-4">
+        {
+            (eyebrow || summary) && (
+                <section class="rounded-2xl border border-main/15 bg-muted/60 p-4">
+                    {eyebrow && <p class="mb-2 font-serif text-lg italic">{eyebrow}</p>}
+                    {summary && <p class="text-sm leading-relaxed opacity-85">{summary}</p>}
+                </section>
+            )
+        }
+        {
+            items.length > 0 && (
+                <section class="rounded-2xl border border-main/15 bg-muted/40 p-4">
+                    <p class="mb-3 font-serif text-base italic">Details</p>
+                    <dl class="space-y-3 text-sm leading-relaxed">
+                        {items.map((item) => (
+                            <div>
+                                <dt class="opacity-60">{item.label}</dt>
+                                <dd>{item.value}</dd>
+                            </div>
+                        ))}
+                    </dl>
+                </section>
+            )
+        }
+        {
+            tags.length > 0 && (
+                <section class="rounded-2xl border border-main/15 bg-muted/40 p-4">
+                    <p class="mb-3 font-serif text-base italic">Keywords</p>
+                    <div class="flex flex-wrap gap-2">
+                        {tags.map((tag) =>
+                            tag.href ? (
+                                <a
+                                    href={tag.href}
+                                    class="rounded-full border border-main/20 px-3 py-1 text-xs leading-relaxed transition hover:bg-main hover:text-bg-main"
+                                >
+                                    {tag.label}
+                                </a>
+                            ) : (
+                                <span class="rounded-full border border-main/20 px-3 py-1 text-xs leading-relaxed">{tag.label}</span>
+                            )
+                        )}
+                    </div>
+                </section>
+            )
+        }
+        <a
+            href="#"
+            class="inline-flex items-center rounded-full border border-main/25 px-4 py-2 text-sm transition hover:bg-main hover:text-bg-main"
+        >
+            Back to top
+        </a>
+    </div>
+</aside>
+
+<style>
+    @media (min-width: 1280px) {
+        .page-rail-panel {
+            position: fixed;
+            top: 7rem;
+            right: max(1.5rem, calc(50vw - 42rem));
+            width: 18rem;
+            max-height: calc(100vh - 8.5rem);
+            overflow-y: auto;
+        }
+    }
+</style>

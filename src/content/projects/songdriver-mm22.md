@@ -5,7 +5,7 @@ publishDate: 'Oct 13 2022'
 isFeatured: true
 seo:
   image:
-    src: 'project-1.jpg'
+    src: '/papers/songdriver-overview.jpg'
 ---
 
 **Authors:** Zihao Wang, Kejun Zhang, Yuxing Wang, Chen Zhang, Qihao Liang, Pengfei Yu, Yongsheng Feng, Wenbo Liu, Yikai Wang, Yuntao Bao, Yiheng Yang
@@ -45,11 +45,6 @@ In the **prediction phase**, a linear-chain CRF predicts the playable chord for 
 
 At the same time, the model avoids the usual autoregressive drift. The prediction stage does not keep conditioning on its own past accompaniment outputs. It conditions on the cached arrangement signal, which is more stable and structurally informed.
 
-<figure style="margin: 1.5rem 0;">
-  <img src="/papers/songdriver-two-phase.jpg" alt="SongDriver two-phase architecture" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The two-phase architecture is the real contribution: a Transformer provides harmonic planning, and a CRF turns that plan into playable streaming accompaniment.</em></figcaption>
-</figure>
-
 This is a stronger design than a single end-to-end autoregressive generator for two reasons:
 
 1. The Transformer is used where long-range dependency modeling matters most: harmonic arrangement.
@@ -75,9 +70,11 @@ The four added signals are:
 - **Terminal chords**: cadence-related markers that signal phrase endings and larger structural boundaries.
 
 <figure style="margin: 1.5rem 0;">
-  <img src="/papers/songdriver-feature-embedding.jpg" alt="SongDriver feature embedding figure" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The embedding design shows how note-level melody and higher-level harmonic markers are injected before attention layers.</em></figcaption>
+  <img src="/papers/songdriver-weighted-factor.jpg" alt="SongDriver weighted factor extraction figure" style="display:block; width:100%; max-width:560px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>Instead of feeding raw notes alone, SongDriver extracts a weighted factor by matching the current beat against a chord map with a minimum-edit-cost rule.</em></figcaption>
 </figure>
+
+The weighted-factor module is the most concrete example of how the paper injects long-range musical knowledge into a streaming pipeline. The system first constructs a **ChordMap** that spans simple triads up to richer chord types, then compares the active note collection against candidate chords and chooses the lowest-cost harmonic summary for the current beat. That summary is much easier for the Transformer to condition on than a raw note stream, because it already compresses the local melody into a coarse harmonic hypothesis.
 
 This part matters because it explains why the system is not merely a latency hack. The paper explicitly compensates for the information loss caused by beat-level streaming. Without these feature channels, the model would be forced to approximate phrase structure from a tiny rolling window.
 
@@ -90,11 +87,6 @@ P(c_{1:T} \mid x_{1:T}) = \frac{\exp\left(\sum_t \psi_u(c_t, x_t) + \sum_t \psi_
 $$
 
 where $c_t$ is the chord state at time $t$, $\psi_u$ is the unary compatibility between the current context and candidate chord, and $\psi_p$ is the transition potential between consecutive chord states.
-
-<figure style="margin: 1.5rem 0;">
-  <img src="/papers/songdriver-crf-stage.jpg" alt="SongDriver CRF prediction stage" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The CRF is used as a low-latency structured decoder, not as a generic classifier. That choice is aligned with the sequential nature of chord progression.</em></figcaption>
-</figure>
 
 After chord prediction, SongDriver still has to solve another practical problem: a chord sequence is not yet a convincing accompaniment. The system therefore adds a **texture generation** layer that maps predicted harmony into multi-track accompaniment patterns for piano, guitar, cello, drums, and related parts.
 
@@ -111,13 +103,34 @@ The paper trains SongDriver on open-source datasets together with the authors' a
 
 Evaluation is not limited to one metric. The paper reports:
 
-- objective metrics that compare generated accompaniment against ground truth;
-- subjective metrics measuring harmony with the melody, coherence of chord progression, and overall musicality;
-- latency-oriented comparisons against both latency-heavy and exposure-bias-heavy baselines.
+- objective metrics comparing generated accompaniment against ground truth;
+- subjective metrics measuring harmonic appropriateness, progression coherence, and perceived synchronization;
+- comparisons against both **latency models** and **bias models** rather than only against one baseline family.
 
 The strongest result is not just that SongDriver scores well. It is that the **Transformer-CRF pairing** consistently beats alternative pairings such as Transformer-Markov, Transformer-LSTM, RNN-CRF, and HMM-CRF. That supports the paper's architectural claim that global planning and low-latency execution should be handled by different modules.
 
-The broader baseline comparison also shows the intended trade-off: SongDriver stays competitive on quality while keeping physical latency close to the processing time of the second-stage CRF. In other words, the arrangement stage can be computed in parallel and cached, so the live path remains light.
+The paper's own Table 4 is useful because it shows that SongDriver stays very close to ground truth on the metrics the authors care about most:
+
+| Reported quantity | SongDriver |
+| --- | --- |
+| `CTnCTR` delta from ground truth | `-0.010` |
+| `PCS` delta from ground truth | `-0.015` |
+| `MCTD` delta from ground truth | `-0.004` |
+| `HS` delta from ground truth | `+0.008` |
+| Subjective `MAH` score | `3.92` |
+| Subjective `CPC` score | `4.08` |
+| Subjective `MHS` score | `4.14` |
+
+Those numbers matter because the paper explicitly argues that `CTnCTR` and `MCTD` are tied to how well accompaniment stays synchronized with the incoming melody, while `HS` reflects harmonic stability. On all three, SongDriver is either the best system or essentially tied for best while still preserving the real-time constraint.
+
+The ablation study is equally important. When the authors remove any one of the four musical features, performance drops across both objective and subjective metrics. That means the handcrafted feature layer is not decorative; it is a structural part of why the short-context Transformer works at all in a streaming setting.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/songdriver-results-curves.jpg" alt="SongDriver bias model comparison curves" style="display:block; width:100%; max-width:900px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>In the bias-model comparison, SongDriver stays visibly closer to the ground-truth curves as melody length increases, while simpler forecasting baselines drift or fluctuate.</em></figcaption>
+</figure>
+
+The bias-model comparison is especially telling. As the melody becomes longer, the SongDriver curve remains closest to ground truth across the plotted metrics, whereas Markov-Lin, Real-CPG, and plain CRF either drift steadily or fluctuate. This is exactly what one would expect if the cached arrangement signal is stabilizing the live decoder. In other words, the arrangement stage can be computed in parallel and cached, so the live path remains light without giving up structural consistency.
 
 ## 6. Why This Paper Matters
 

@@ -5,7 +5,7 @@ publishDate: 'Apr 1 2025'
 isFeatured: true
 seo:
   image:
-    src: 'project-7.jpg'
+    src: '/papers/remast-workflow.jpg'
 ---
 
 **Authors:** Zihao Wang, Le Ma, Chen Zhang, Bo Han, Yikai Wang, Xinyi Chen, Haorong Hong, Wenbo Liu, Xinda Wu, Kejun Zhang

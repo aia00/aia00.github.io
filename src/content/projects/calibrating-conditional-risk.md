@@ -103,11 +103,6 @@ The main empirical findings are aligned with the theory:
 
 The last point matters because it shows why ordinary post-hoc calibration is not enough. Conditional risk estimation is an instance-level object, so methods optimized for coarse calibration can distort the signal needed for defer-or-predict decisions.
 
-<figure style="margin: 1.5rem 0;">
-  <img src="/papers/conditional-risk-classification-appendix.jpg" alt="Additional conditional risk classification results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The broader comparison reinforces the same conclusion: the estimator's quality, not only the predictor's quality, determines whether conditional risk is useful downstream.</em></figcaption>
-</figure>
-
 ## 6. Why the Problem Matters Operationally: Learning to Defer and Regression with Rejection
 
 The paper's downstream testbed is learning to defer. In this setting, the system predicts on easy instances and defers difficult ones to a human expert at some cost `c`.
@@ -143,23 +138,19 @@ The main message is not that one universal calibrator wins everywhere. The deepe
   <figcaption><em>The table-level comparison makes the intended point very concrete: the best rejector is typically attached to the best conditional-risk estimator, not simply to the strongest raw predictor.</em></figcaption>
 </figure>
 
-<figure style="margin: 1.5rem 0;">
-  <img src="/papers/conditional-risk-rwr-full-results.jpg" alt="Conditional risk full regression with rejection results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
-  <figcaption><em>The full downstream results show that conditional risk estimation is not just statistically neat. It improves system-level decision quality under explicit deferral costs.</em></figcaption>
-</figure>
-
 ## 8. Why This Paper Matters
 
-I think this work is useful because it isolates a machine-learning object that shows up implicitly in many systems but is rarely treated as a first-class problem. Conditional risk is the right abstraction when the downstream system has to decide:
+The strongest point of this paper is that it identifies the **right object** for reject/defer decisions. The downstream system does not need a generic confidence score. It needs an estimate of the **expected loss on this specific input**. Once the problem is stated that way, conditional risk becomes the natural control variable for selective prediction, learning to defer, and rejection-based pipelines.
 
-- predict automatically,
-- defer to a human,
-- or allocate data-collection budget to difficult regions.
+What makes the paper technically sharp is not just the definition. It proves that in classification there are two genuinely different estimation routes:
 
-The paper contributes on three levels:
+- regress directly on realized losses;
+- or estimate conditional class probabilities and then convert them into expected loss.
 
-1. **Formulation**: it defines conditional risk calibration as its own learning problem.
-2. **Theory**: it shows how regression-based and calibration-based estimators relate and when calibration-based methods are stronger.
-3. **Practice**: it demonstrates that better conditional-risk estimation improves learning-to-defer and regression-with-rejection pipelines.
+The theoretical and empirical results then line up around one concrete message:
 
-That combination makes it more than a calibration note. It is really a paper about how to turn uncertainty into an actionable instance-level decision signal.
+1. **Classification**: calibration-based estimators can dominate direct regression-based estimators because they preserve more structure from the underlying predictive distribution.
+2. **Decision systems**: better conditional-risk estimates produce better reject/defer behavior, not just nicer uncertainty plots.
+3. **Interpretation**: "well calibrated on average" is too weak when the action is taken per instance.
+
+So the paper is not really a note about post-hoc calibration. It is a paper about how to turn predictive uncertainty into an **actionable instance-level decision signal** and how to estimate that signal in a mathematically principled way.

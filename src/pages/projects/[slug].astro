@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageRail from '../../components/PageRail.astro';
 import ProjectPreview from '../../components/ProjectPreview.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 
@@ -20,11 +21,41 @@ export async function getStaticPaths() {
 type Props = { project: CollectionEntry<'projects'>; prevProject: CollectionEntry<'projects'>; nextProject: CollectionEntry<'projects'> };
 
 const { project, prevProject, nextProject } = Astro.props;
-const { title, description, seo } = project.data;
+const { title, description, publishDate, seo } = project.data;
 const { Content } = await project.render();
+const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-us', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+const readingMinutes = Math.max(1, Math.ceil((project.body || '').trim().split(/\s+/).filter(Boolean).length / 220));
+const projectIntro = (project.body || '')
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .find(
+        (block) =>
+            block &&
+            !block.startsWith('**Authors:**') &&
+            !block.startsWith('**Paper:**') &&
+            !block.startsWith('##') &&
+            !block.startsWith('<figure') &&
+            !block.startsWith('|') &&
+            !block.startsWith('- ')
+    );
 ---
 
 <BaseLayout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={false}>
+    <PageRail
+        slot="rail"
+        eyebrow="Overview"
+        summary={projectIntro}
+        items={[
+            { label: 'Published', value: formatDate(publishDate) },
+            ...(description ? [{ label: 'Venue', value: description }] : []),
+            { label: 'Reading time', value: `${readingMinutes} min` }
+        ]}
+    />
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight">{title}</h1>
