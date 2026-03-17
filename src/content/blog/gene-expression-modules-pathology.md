@@ -81,16 +81,23 @@ This is exactly where modules help. They let you represent the tumor as a combin
 
 ## 3. Modules are not the same as PAM50, but they help explain it
 
-The relationship between modules and PAM50 is important to get right.
+The relationship between modules and PAM50 is important to get right, because these words live at different levels.
 
-| Concept | What it is | Breast-cancer example |
-| --- | --- | --- |
-| single gene | one measured feature | `ESR1`, `ERBB2`, `MKI67` |
-| module | a coordinated biological program | luminal, proliferation, HER2, basal, immune |
-| subtype | a broader intrinsic category | Luminal A, Luminal B, HER2-enriched, Basal-like |
-| classifier | a rule that maps expression patterns to labels | PAM50 |
+| Level | What it means | Breast-cancer example | Typical output |
+| --- | --- | --- | --- |
+| single gene | one measured molecular feature | `ESR1`, `ERBB2`, `MKI67` | one expression value per sample |
+| module | a coordinated gene-expression program | luminal, proliferation, HER2-related, basal-like, immune | one continuous module score per sample |
+| subtype | a broader intrinsic tumor category | Luminal A, Luminal B, HER2-enriched, Basal-like | one discrete class label |
+| PAM50 | the classifier that uses expression patterns to assign intrinsic subtype | PAM50 / Prosigna | a subtype call, often with subtype-related scores |
 
-PAM50 is **not** itself one module. It is a classifier built from a curated gene set that helps assign tumors to intrinsic subtypes. But those subtypes make more sense if you think of them as different **combinations of module strength**.
+So the clean way to think about it is:
+
+- a **gene** is one variable;
+- a **module** is a coordinated program built from multiple genes;
+- a **subtype** is a category such as Luminal A or Basal-like;
+- **PAM50** is the method that maps expression patterns to those subtype calls.
+
+PAM50 is therefore **not** itself one module. It is a classifier built from a curated gene set that helps assign tumors to intrinsic subtypes. Those subtype calls make more sense if you think of them as characteristic **combinations of module strength**.
 
 A useful mental model is:
 
