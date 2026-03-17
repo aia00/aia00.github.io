@@ -1,7 +1,7 @@
 ---
 title: An Auxiliary Device for Music Composition
 description: Chinese invention patent (CN114724534B), granted, 2025
-publishDate: '2025-11-21'
+publishDate: '2022-04-01'
 isFeatured: false
 seo:
   title: "An Auxiliary Device for Music Composition"
