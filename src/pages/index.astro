@@ -8,7 +8,7 @@ import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
 
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
-const featuredProjects = projects.filter(({ data }) => data.isFeatured);
+const featuredProjects = projects.filter(({ data }) => data.isFeatured).slice(0, 3);
 
 const description = 'Yikai Wang at UNC Homepage';
 

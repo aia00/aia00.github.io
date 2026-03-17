@@ -6,48 +6,160 @@ isFeatured: true
 
 **Authors:** Yikai Wang
 
-## Key Figures
+## 1. The Problem: Global Calibration Is Too Coarse for Instance-level Decisions
 
-![Figure 1. Overview figure from the manuscript](/papers/conditional-risk-fig1.jpg)
+Most uncertainty methods report a global statement such as "the model is calibrated on average." That is not the question a downstream decision-maker actually faces. In practice, the question is local:
 
-![Figure 2. Empirical calibration/estimation comparison](/papers/conditional-risk-fig2.jpg)
+- for this specific input `x`, how wrong is the predictor expected to be?
+- should the system predict automatically, ask for human help, or reject the sample entirely?
 
-![Figure 3. Additional evaluation results on conditional risk behavior](/papers/conditional-risk-fig3.jpg)
+This paper formalizes that question through the conditional risk function
 
-## Overview
+$$
+g(x) = E[\ell(\hat f(X), Y) \mid X = x]
+$$
 
-This project studies **conditional risk calibration**: estimating expected loss conditioned on features, rather than only reporting global uncertainty.
+where `f_hat` is the predictor and `ell` is the task loss. The object `g(x)` is the expected loss conditioned on the input itself, not on the population as a whole.
 
-In decision systems, the operational question is usually instance-specific: "How likely is this prediction to be wrong for this particular input?" Conditional risk directly targets that question.
+That quantity is useful because it can directly drive downstream actions. High `g(x)` means the model is unreliable on this instance, which is exactly the kind of signal needed in active learning, selective prediction, and learning-to-defer systems.
 
-## Formal Goal
+## 2. Formal Setup in Classification and Regression
 
-For input `x`, estimate conditional predictive risk:
+The paper studies both classification and regression.
 
-- expected task loss given `x`;
-- calibration quality at the individual (or subgroup) level.
+In the classification case, if $p(x)_k = P(Y = k \mid X = x)$, then the conditional risk is
 
-This differs from aggregate calibration metrics, which may look good globally while hiding local reliability failures.
+$$
+g(x) = \sum_{k=1}^K \ell(\hat f(x), k)p(x)_k
+$$
 
-## Main Contributions
+In the regression case, if the conditional response distribution has density $p(y \mid x)$, then
 
-### 1) Problem formalization
+$$
+g(x) = \int \ell(\hat f(x), y)p(y \mid x)\,dy
+$$
 
-- Define conditional risk calibration as an explicit machine learning objective.
-- Separate it conceptually from standard global uncertainty estimation.
+This looks simple, but it is a distinct problem from ordinary probability calibration. Probability calibration estimates class probabilities. Conditional risk calibration estimates **expected loss**, which is a downstream decision object rather than a predictive probability.
 
-### 2) Theoretical analysis
+The paper's first conceptual contribution is to separate these two notions cleanly while still proving that they are related in classification.
 
-- Show the calibration task can be reformulated as a regression problem in both classification and regression settings.
-- Establish links between probability calibration and conditional risk quality in classification.
-- Characterize settings where improvements in probability calibration do or do not transfer to conditional risk.
+## 3. Two Ways to Estimate Conditional Risk
 
-### 3) Empirical validation
+The paper analyzes two estimation routes.
 
-- Validate the theoretical claims across multiple task/model settings.
-- Provide qualitative and quantitative analyses of estimator behavior.
-- Demonstrate downstream value in defer/escalate-style decision pipelines.
+### 3.1 Regression-based estimation
 
-## Why This Matters
+The direct approach is to treat the realized loss as a regression target. For each sample $(x_i, y_i)$, define
 
-Conditional risk calibration is a core component for reliable uncertainty-aware decision systems. This work provides a principled base for moving from coarse global confidence scores to actionable input-level reliability estimates.
+$$
+z_i = \ell(\hat f(x_i), y_i)
+$$
+
+and fit a regressor $g_\theta(x)$ on the dataset $\{(x_i, z_i)\}$. This yields the empirical objective
+
+$$
+\min_\theta \frac{1}{n}\sum_i L(g_\theta(x_i), z_i)
+$$
+This is attractive because it turns the problem into a standard supervised regression task with familiar generalization tools.
+
+### 3.2 Calibration-based estimation
+
+In classification, the paper shows a second route. Instead of regressing directly on realized losses, estimate the full conditional probability vector $p_\theta(x)$ and plug it into
+
+$$
+g_{\mathrm{cal}, \theta}(x) = \sum_{k=1}^K \ell(\hat f(x), k)p_\theta(x)_k
+$$
+
+This approach is only available in classification, but it is theoretically more interpretable because it exposes how better probability estimation improves conditional risk estimation.
+
+## 4. The Main Theoretical Result: Calibration-based Estimation Can Be Better
+
+The paper proves that the regression-based formulation inherits the standard excess-risk behavior of ordinary regression. That is useful, but the more interesting result is on the calibration-based side.
+
+Under weak realizability and proper classification loss, the calibration-based estimator is tied directly to the conditional probability model. The paper then shows that this leads to a tighter way to control conditional risk than the direct regression route, and in favorable classification settings the calibration-based method can outperform the regression-based one both theoretically and empirically.
+
+In plain terms, the theory says:
+
+- estimating `g(x)` directly is possible;
+- but in classification, estimating `p(y | x)` well can be an even better route to estimating `g(x)`;
+- therefore conditional risk calibration is related to probability calibration, yet not reducible to it.
+
+This is the part of the paper that makes the problem mathematically interesting rather than merely application-driven.
+
+## 5. Classification Experiments: Better Probability Models Give Better Conditional Risk Estimates
+
+The classification experiments use CIFAR-10 with predictors of varying strength, including CNN, ResNet, and EfficientNet variants. The calibrators are also varied in strength, so the experiments can test both the predictor side and the conditional-risk estimator side.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-classification-table.jpg" alt="Conditional risk classification results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>The classification results support the theory: calibration-based estimators consistently outperform direct regression-based estimators when the task is classification.</em></figcaption>
+</figure>
+
+The main empirical findings are aligned with the theory:
+
+- calibration-based methods outperform regression-based estimators across predictors;
+- stronger probability estimators lead to better conditional-risk estimation;
+- group calibration methods such as Platt scaling can still be weaker than estimators targeted at the individual-input level.
+
+The last point matters because it shows why ordinary post-hoc calibration is not enough. Conditional risk estimation is an instance-level object, so methods optimized for coarse calibration can distort the signal needed for defer-or-predict decisions.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-classification-appendix.jpg" alt="Additional conditional risk classification results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>The broader comparison reinforces the same conclusion: the estimator's quality, not only the predictor's quality, determines whether conditional risk is useful downstream.</em></figcaption>
+</figure>
+
+## 6. Why the Problem Matters Operationally: Learning to Defer and Regression with Rejection
+
+The paper's downstream testbed is learning to defer. In this setting, the system predicts on easy instances and defers difficult ones to a human expert at some cost `c`.
+
+For regression with rejection, the pipeline can be described as follows:
+
+- predictor `f_hat(x)` proposes a response;
+- conditional-risk estimator `g_theta(x)` estimates expected loss;
+- rejector `r(x)` chooses whether to accept the prediction or defer.
+
+The value of conditional risk is that `g_theta(x)` becomes the natural control signal. If the estimated risk exceeds a threshold tied to the deferral cost, the system should escalate.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-embedded-figure.jpg" alt="Conditional risk regression figure" style="display:block; width:100%; max-width:760px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>The paper explicitly links conditional risk quality to reject-or-defer quality. Better instance-level risk estimates make the rejector more selective and more reliable.</em></figcaption>
+</figure>
+
+This is the most practical section of the paper because it converts conditional risk from an abstract quantity into a control variable with operational meaning.
+
+## 7. Regression with Rejection: Better Calibrators Lower Downstream Loss
+
+The regression experiments use multiple UCI datasets and compare several predictor-calibrator combinations, including linear regression, random forest, MLP-based predictors, and random-forest calibrators.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-regression-rwr.jpg" alt="Conditional risk regression with rejection results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>In regression with rejection, the paper finds a clear empirical relationship between calibrator quality and downstream rejector quality.</em></figcaption>
+</figure>
+
+The main message is not that one universal calibrator wins everywhere. The deeper finding is that **lower conditional-risk estimation error tends to translate into lower regression-with-rejection loss**. In the reported experiments, random-forest calibrators are especially strong, and combinations such as MLP+RF and RF+RF match or outperform prior regression-with-rejection baselines on many datasets.
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-rwr-table.jpg" alt="Conditional risk RwR table" style="display:block; width:100%; max-width:760px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>The table-level comparison makes the intended point very concrete: the best rejector is typically attached to the best conditional-risk estimator, not simply to the strongest raw predictor.</em></figcaption>
+</figure>
+
+<figure style="margin: 1.5rem 0;">
+  <img src="/papers/conditional-risk-rwr-full-results.jpg" alt="Conditional risk full regression with rejection results" style="display:block; width:100%; max-width:820px; margin:0 auto;" loading="lazy" />
+  <figcaption><em>The full downstream results show that conditional risk estimation is not just statistically neat. It improves system-level decision quality under explicit deferral costs.</em></figcaption>
+</figure>
+
+## 8. Why This Paper Matters
+
+I think this work is useful because it isolates a machine-learning object that shows up implicitly in many systems but is rarely treated as a first-class problem. Conditional risk is the right abstraction when the downstream system has to decide:
+
+- predict automatically,
+- defer to a human,
+- or allocate data-collection budget to difficult regions.
+
+The paper contributes on three levels:
+
+1. **Formulation**: it defines conditional risk calibration as its own learning problem.
+2. **Theory**: it shows how regression-based and calibration-based estimators relate and when calibration-based methods are stronger.
+3. **Practice**: it demonstrates that better conditional-risk estimation improves learning-to-defer and regression-with-rejection pipelines.
+
+That combination makes it more than a calibration note. It is really a paper about how to turn uncertainty into an actionable instance-level decision signal.

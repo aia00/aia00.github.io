@@ -9,7 +9,32 @@ import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-    const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
+    const posts = ((await getCollection('blog')) ?? []).sort(sortItemsByDateDesc);
+    if (posts.length === 0) {
+        return [
+            {
+                params: { page: undefined },
+                props: {
+                    page: {
+                        data: [],
+                        currentPage: 1,
+                        lastPage: 1,
+                        size: siteConfig.postsPerPage || 4,
+                        total: 0,
+                        start: 0,
+                        end: 0,
+                        url: {
+                            current: '/blog/',
+                            prev: undefined,
+                            next: undefined,
+                            first: '/blog/',
+                            last: '/blog/'
+                        }
+                    }
+                }
+            }
+        ];
+    }
     return paginate(posts, { pageSize: siteConfig.postsPerPage || 4 });
 }
 
@@ -26,7 +51,15 @@ const blog = page.data;
     showHeader={false}
 >
     <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">Blog Archive</h1>
-    {blog.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
-    <Pagination page={page} class="my-16 sm:my-24" />
+    {
+        blog.length > 0 ? (
+            <>
+                {blog.map((post) => <PostPreview post={post} class="mb-10 sm:mb-12" />)}
+                <Pagination page={page} class="my-16 sm:my-24" />
+            </>
+        ) : (
+            <p class="text-base leading-relaxed sm:text-lg">No blog posts right now.</p>
+        )
+    }
     <Subscribe class="my-16 sm:my-24" />
 </BaseLayout>
