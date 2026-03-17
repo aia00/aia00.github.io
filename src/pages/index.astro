@@ -8,7 +8,7 @@ import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
 
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
-const featuredProjects = projects.filter(({ data }) => data.isFeatured).slice(0, 3);
+const featuredProjects = projects.filter(({ data }) => data.isFeatured).slice(0, 5);
 
 const description = 'Personal website of Yikai Wang, a Ph.D. student in Statistics and Operations Research at UNC Chapel Hill.';
 

@@ -1,5 +1,6 @@
 ---
 title: Calibrating Conditional Risk
+description: Working paper
 publishDate: 'Jan 10 2026'
 isFeatured: true
 ---

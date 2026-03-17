@@ -8,7 +8,16 @@ import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-    const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
+    const projects = (await getCollection('projects')).sort((itemA, itemB) => {
+        const aPinnedLast = itemA.slug === 'music-composition-assistant-patent';
+        const bPinnedLast = itemB.slug === 'music-composition-assistant-patent';
+
+        if (aPinnedLast !== bPinnedLast) {
+            return aPinnedLast ? 1 : -1;
+        }
+
+        return sortItemsByDateDesc(itemA, itemB);
+    });
     return paginate(projects, { pageSize: siteConfig.projectsPerPage || 6 });
 }
 

@@ -1,6 +1,6 @@
 ---
 title: Risk Profiling and Modulation for LLMs
-description: arXiv preprint (arXiv), 2025
+description: arXiv preprint (arXiv), 2025; INFORMS Annual Meeting talk, 2025
 publishDate: 'Sep 30 2025'
 isFeatured: true
 ---
@@ -8,6 +8,8 @@ isFeatured: true
 **Authors:** Yikai Wang, Xiaocheng Li, Guanting Chen
 
 **Paper:** [arXiv:2509.23058v3](https://arxiv.org/abs/2509.23058v3)
+
+**Presentation:** INFORMS Annual Meeting talk, 2025
 
 ## 1. Why Risk Preference Is a Real Alignment Problem
 

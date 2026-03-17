@@ -1,5 +1,6 @@
 ---
 title: Why Agentic Design is Necessary for Data Analytics
+description: Working paper
 publishDate: 'Jan 11 2026'
 isFeatured: true
 ---

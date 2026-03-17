@@ -6,9 +6,9 @@ import Header from '../components/Header.astro';
 import Nav from '../components/Nav.astro';
 import PageToc from '../components/PageToc.astro';
 
-export type Props = HeadProps & { showHeader?: boolean };
+export type Props = HeadProps & { showHeader?: boolean; showToc?: boolean };
 
-const { showHeader = true, ...head } = Astro.props;
+const { showHeader = true, showToc = true, ...head } = Astro.props;
 const hasRail = Astro.slots.has('rail');
 ---
 
@@ -28,7 +28,7 @@ const hasRail = Astro.slots.has('rail');
             <Nav />
             {showHeader && <Header />}
             <div class:list={['grow w-full max-w-7xl mx-auto xl:flex xl:items-start', hasRail ? 'xl:gap-8' : 'xl:gap-12']}>
-                <PageToc />
+                {showToc && <PageToc />}
                 <main class="grow w-full min-w-0 max-w-3xl mx-auto xl:mx-0">
                     <slot />
                 </main>
