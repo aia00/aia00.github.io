@@ -8,7 +8,7 @@ tags:
   - Sports
 seo:
   title: "March Madness"
-  description: "A short note on the appeal of March Madness and the chaos of single-elimination college basketball."
+  description: "Some thoughts on basketball"
 ---
 
 ## RJ & CW
