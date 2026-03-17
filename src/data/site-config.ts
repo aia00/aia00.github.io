@@ -92,7 +92,8 @@ const siteConfig: SiteConfig = {
         text: [
             "I'm Yikai Wang, currently pursuing a Ph.D. degree in the Statistics and Operations Research Department (STOR) at the University of North Carolina at Chapel Hill (UNC).",
             'I received my B.S. degree in Computer Science from Zhejiang University, China.',
-            'My research interests include large language models, reinforcement learning and optimization.'
+            'My research interests include large language models, reinforcement learning and optimization.',
+            'Outside research, I enjoy playing [Weiqi](https://en.wikipedia.org/wiki/Go_(game)), astronomy, history, movies, music, all kinds of sports, and the many curious facts and stories that make the world endlessly interesting. I also play the bamboo flute and guitar.'
         ].join('\n\n'),
         image: {
             src: '/homepage.jpg',
