@@ -18,6 +18,13 @@ const resolvedImage = image?.src
       }
     : undefined;
 const canonicalURL = new URL(Astro.request.url, Astro.site);
+const isHomePage = canonicalURL.pathname === '/';
+const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.title,
+    url: Astro.site
+};
 
 /**
  * Enforce some standard canonical URL formatting across the site.
@@ -72,3 +79,5 @@ function formatCanonicalURL(url: string | URL) {
 <meta property="twitter:description" content={description} />
 {resolvedImage?.src && <meta property="twitter:image" content={resolvedImage.src} />}
 {resolvedImage?.alt && <meta name="twitter:image:alt" content={resolvedImage?.alt} />}
+
+{isHomePage && <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />}

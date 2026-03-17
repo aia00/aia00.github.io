@@ -10,7 +10,7 @@ import { sortItemsByDateDesc } from '../utils/data-utils';
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
 const featuredProjects = projects.filter(({ data }) => data.isFeatured).slice(0, 3);
 
-const description = 'Yikai Wang at UNC Homepage';
+const description = 'Personal website of Yikai Wang, a Ph.D. student in Statistics and Operations Research at UNC Chapel Hill.';
 
 const teachingItems = [
     {
@@ -48,12 +48,7 @@ const teachingItems = [
 ];
 ---
 
-<head>
-    <meta name="description" content={description} />
-    <!-- other head elements -->
-</head>
-
-<BaseLayout description={siteConfig.description} image={siteConfig.image}>
+<BaseLayout description={description} image={siteConfig.image}>
     <Hero />
     {
         featuredProjects?.length > 0 && (

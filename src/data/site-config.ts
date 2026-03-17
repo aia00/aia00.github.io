@@ -40,7 +40,7 @@ export type SiteConfig = {
 const siteConfig: SiteConfig = {
     title: 'Yikai Wang',
     subtitle: 'A Ph.D. Student at UNC',
-    description: 'Yikai Wang"s Homepage',
+    description: 'Personal website of Yikai Wang, a Ph.D. student in Statistics and Operations Research at UNC Chapel Hill.',
     image: {
         src: '/dante-preview.jpg',
         alt: 'Dante - Astro.js and Tailwind CSS theme'
