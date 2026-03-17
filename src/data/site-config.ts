@@ -51,7 +51,7 @@ const siteConfig: SiteConfig = {
             href: '/'
         },
         {
-            text: 'Papers',
+            text: 'Research',
             href: '/projects'
         },
         {
@@ -72,14 +72,6 @@ const siteConfig: SiteConfig = {
             text: 'Contact',
             href: '/contact'
         },
-        // {
-        //     text: 'Terms',
-        //     href: '/terms'
-        // },
-        // {
-        //     text: 'Download theme',
-        //     href: 'https://github.com/JustGoodUI/dante-astro-theme'
-        // }
     ],
     socialLinks: [
         {
@@ -100,7 +92,7 @@ const siteConfig: SiteConfig = {
         text: [
             "I'm Yikai Wang, currently pursuing a Ph.D. degree in the Statistics and Operations Research Department (STOR) at the University of North Carolina at Chapel Hill (UNC).",
             'I received my B.S. degree in Computer Science from Zhejiang University, China.',
-            'My research interests include large language models, adversarial attacks, and reinforcement learning.'
+            'My research interests include large language models, reinforcement learning and optimization.'
         ].join('\n\n'),
         image: {
             src: '/homepage.jpg',

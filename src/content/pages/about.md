@@ -7,8 +7,6 @@ seo:
     src: '/about.jpeg'
     alt: A person sitting at a desk in front of a computer
 ---
-![Alt text for image](/homepage.jpg)
-
 ## Yikai Wang ---- Ph.D. Student at UNC
 
 **Greetings!**
@@ -17,41 +15,38 @@ My research interest lies in large language models,reinforcement learning, optim
 
 ## Education Background
 
-- **University of North Carolina at Chapel Hill**  &emsp; *2023- present*Ph.D. in [Statistics and Operations Research](https://stor.unc.edu/)
-- **Zhejiang University, China**  &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&ensp; *2019-2023*
-  B.S. in [Computer Science](http://www.en.cs.zju.edu.cn/)
+<ul>
+  <li>
+    <div><strong>University of North Carolina at Chapel Hill, NC</strong></div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;">
+      <em>2023-present</em>
+      <span style="text-align: right;">Ph.D. in <a href="https://stor.unc.edu/">Statistics and Operations Research</a></span>
+    </div>
+  </li>
+  <li>
+    <div><strong>Zhejiang University, China</strong></div>
+    <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;">
+      <em>2019-2023</em>
+      <span style="text-align: right;">B.S. in <a href="http://www.en.cs.zju.edu.cn/">Computer Science</a></span>
+    </div>
+  </li>
+</ul>
 
 ## Experiences
 
-- Internship at [Hundsun Technologies Inc.](https://en.hundsun.com/)  &emsp; 2022Data Risk R&D Management Department
-- Teaching Assistant
-
-```
-2023 Fall: STOR 113 
-    Decision Models for Business and Economics
-  
-2024 Spring: STOR 455 
-    Methods of Data Analysis
-```
+- Internship at [Hundsun Technologies Inc.](https://en.hundsun.com/)
+  <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;">
+    <em>2022 Summer</em>
+    <span style="text-align: right;">Data Risk R&amp;D Management Department</span>
+  </div>
+- Teaching
+  <ul>
+    <li><strong>STOR 113:</strong> Decision Models for Business and Economics<br/>Terms: 2023 Fall | Role: Teaching Assistant</li>
+    <li><strong>STOR 455:</strong> Methods of Data Analysis<br/>Terms: 2024 Spring, 2024 Fall | Role: Teaching Assistant</li>
+    <li><strong>STOR 155:</strong> Introduction to Data Models and Inference<br/>Terms: 2024 Summer, 2025 Summer | Role: Instructor</li>
+    <li><strong>STOR 120:</strong> Foundations of Statistics and Data Science<br/>Terms: 2025 Spring, 2025 Fall | Role: Lab Instructor</li>
+  </ul>
 
 ## Skills and Expertise
 
 I specialize both in coding and machine learning theory. My proficiency includes **Python**, **C++**, **R**, and frameworks such as **Pytorch** for machine learning and data analysis. On the theoretical side, I'm well-versed in optimization, statistics and stochastic modeling.
-
-## Innovation and Problem-Solving
-
-I thrive on solving complex problems and transforming ideas into functional, elegant websites. Whether it's optimizing performance, implementing new features, or troubleshooting issues, I approach each challenge with enthusiasm and a commitment to delivering high-quality solutions.
-
-## Continuous Learning
-
-The dynamic nature of the tech industry inspires me to stay up-to-date with the latest trends and advancements. I'm always eager to expand my skill set and embrace emerging technologies that enhance the functionality and aesthetics of the websites I create.
-
-## Collaboration and Communication
-
-I believe in the power of collaboration and effective communication. Whether working with clients, designers, or fellow developers, I value clear communication to ensure the success of every project.
-
-## Get in Touch
-
-Are you looking to elevate your online presence or bring your digital ideas to life? I'd love to hear from you! Feel free to reach out for collaboration, consultation, or just a friendly chat about all things web development.
-
-_Let's build something amazing together!_

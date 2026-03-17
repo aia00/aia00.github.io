@@ -3,18 +3,49 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import Hero from '../components/Hero.astro';
-import PostPreview from '../components/PostPreview.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
-
-const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-const featuredPosts = posts.filter(({ data }) => data.isFeatured);
 
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
 const featuredProjects = projects.filter(({ data }) => data.isFeatured);
 
 const description = 'Yikai Wang at UNC Homepage';
+
+const teachingItems = [
+    {
+        terms: '2023 Fall',
+        course: 'STOR 113',
+        title: 'Decision Models for Business and Economics',
+        role: 'Teaching Assistant',
+        description:
+            'An introduction to multivariable quantitative models in economics. Mathematical techniques for formulating and solving optimization and equilibrium problems are developed, including elementary models under uncertainty.'
+    },
+    {
+        terms: '2024 Spring, 2024 Fall',
+        course: 'STOR 455',
+        title: 'Methods of Data Analysis',
+        role: 'Teaching Assistant',
+        description:
+            'Review of basic inference; two-sample comparisons; correlation; introduction to matrices; simple and multiple regression (including significance tests, diagnostics, and variable selection); analysis of variance; use of statistical software. Honors version available.'
+    },
+    {
+        terms: '2024 Summer, 2025 Summer',
+        course: 'STOR 155',
+        title: 'Introduction to Data Models and Inference',
+        role: 'Instructor',
+        description:
+            'Data analysis; correlation and regression; sampling and experimental design; basic probability (random variables, expected values, normal and binomial distributions); hypothesis testing and confidence intervals for means, proportions, and regression parameters; use of spreadsheet software. Honors version available.'
+    },
+    {
+        terms: '2025 Spring, 2025 Fall',
+        course: 'STOR 120',
+        title: 'Foundations of Statistics and Data Science',
+        role: 'Lab Instructor',
+        description:
+            'The course teaches critical concepts and skills in computer programming and statistical inference, in conjunction with hands-on analysis of real-world datasets, including economic data, document collections, geographical data, and social networks. It delves into social issues surrounding data analysis such as privacy and design. Honors version available.'
+    }
+];
 ---
 
 <head>
@@ -27,27 +58,32 @@ const description = 'Yikai Wang at UNC Homepage';
     {
         featuredProjects?.length > 0 && (
             <div class="mb-16 sm:mb-24">
-                <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Papers</h2>
+                <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Research</h2>
                 {featuredProjects.map((project) => (
                     <ProjectPreview project={project} class="mb-10 sm:mb-12" headingLevel="h3" />
                 ))}
                 <div class="mt-12 sm:mt-16">
-                    <Button href="/projects">View All Papers</Button>
+                    <Button href="/projects">View All Research</Button>
                 </div>
             </div>
         )
     }
     {
-        featuredPosts?.length > 0 && (
-            <div class="mb-16 sm:mb-24">
-                <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Writing</h2>
-                {featuredPosts.map((post) => (
-                    <PostPreview post={post} class="mb-10 sm:mb-12" headingLevel="h3" />
-                ))}
-                <div class="mt-12 sm:mt-16">
-                    <Button href="/blog">View All Posts</Button>
-                </div>
-            </div>
+        teachingItems.length > 0 && (
+            <section class="mb-16 sm:mb-24">
+                <h2 class="mb-8 text-xl font-serif italic sm:mb-10 sm:text-2xl">Teaching</h2>
+                <ul class="space-y-6 sm:space-y-8">
+                    {teachingItems.map((item) => (
+                        <li class="space-y-2">
+                            <h3 class="text-base leading-relaxed font-medium sm:text-lg">{item.course}: {item.title}</h3>
+                            <p class="text-sm leading-relaxed opacity-80 sm:text-base">
+                                <strong>Terms:</strong> {item.terms} | <strong>Role:</strong> {item.role}
+                            </p>
+                            <p class="text-base leading-relaxed">{item.description}</p>
+                        </li>
+                    ))}
+                </ul>
+            </section>
         )
     }
 </BaseLayout>
