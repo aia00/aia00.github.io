@@ -1,7 +1,7 @@
 ---
 title: "ER Status, PAM50, ER IHC, and H&E Images in Breast Cancer"
 excerpt: A detailed overview of what ER status means in breast cancer, what ER immunohistochemistry and H&E images capture, how PAM50 intrinsic subtypes differ from IHC labels, and why combining ER IHC with H&E makes biological sense.
-publishDate: 'Mar 17 2026'
+publishDate: '2026-03-17T11:00:00-04:00'
 isFeatured: false
 tags:
   - Breast Cancer

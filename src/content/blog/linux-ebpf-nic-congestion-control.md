@@ -1,7 +1,7 @@
 ---
 title: "Linux eBPF, NIC Queues, and Congestion Control: How the Stack Fits Together"
 excerpt: A practical introduction to how Linux eBPF observes packet processing, how congestion appears in NIC and qdisc queues, and how algorithms such as CUBIC, BBR, DCTCP, and DCQCN react.
-publishDate: 'Mar 17 2026'
+publishDate: '2026-03-17T09:00:00-04:00'
 isFeatured: false
 tags:
   - Linux

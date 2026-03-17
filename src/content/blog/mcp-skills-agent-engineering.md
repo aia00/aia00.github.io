@@ -1,7 +1,7 @@
 ---
 title: "MCP Is the Interface, Skills Are the Workflow"
 excerpt: A practical guide to what MCP actually is, how Skills differ from MCP servers, and how to build both in a way that makes real agents more reliable instead of more complicated.
-publishDate: 'Mar 17 2026'
+publishDate: '2026-03-17T13:00:00-04:00'
 isFeatured: false
 tags:
   - Agents
