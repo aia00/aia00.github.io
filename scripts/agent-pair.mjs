@@ -2,7 +2,8 @@ import fs from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 import process from 'node:process';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
+import { createInterface } from 'node:readline';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 
@@ -312,6 +313,427 @@ function printSection(title, body) {
     }
 }
 
+function shortId(value) {
+    const text = String(value || '').trim();
+    return text ? text.slice(0, 8) : '';
+}
+
+function cleanProgressText(text, limit = 220) {
+    const normalized = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!normalized) {
+        return '';
+    }
+
+    if (normalized.length <= limit) {
+        return normalized;
+    }
+
+    return `${normalized.slice(0, limit - 16)}...[truncated]`;
+}
+
+function appendBoundedText(current, addition, limit = 120000) {
+    const next = `${current}${addition}`;
+    if (next.length <= limit) {
+        return next;
+    }
+
+    return next.slice(next.length - limit);
+}
+
+function createProgressReporter(role) {
+    let lastMessage = '';
+
+    return (message) => {
+        const cleaned = cleanProgressText(message);
+        if (!cleaned || cleaned === lastMessage) {
+            return;
+        }
+
+        lastMessage = cleaned;
+        console.log(`[${role}] ${cleaned}`);
+    };
+}
+
+function humanizeToken(value) {
+    return String(value || '')
+        .replace(/[._-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function describeCommandValue(value) {
+    if (!value) {
+        return '';
+    }
+
+    if (typeof value === 'string') {
+        return cleanProgressText(value, 200);
+    }
+
+    if (Array.isArray(value)) {
+        return cleanProgressText(value.map((item) => String(item)).join(' '), 200);
+    }
+
+    if (typeof value === 'object') {
+        if (Array.isArray(value.argv) && value.argv.length > 0) {
+            return cleanProgressText(value.argv.map((item) => String(item)).join(' '), 200);
+        }
+
+        if (typeof value.command === 'string') {
+            return cleanProgressText(value.command, 200);
+        }
+
+        if (typeof value.cmd === 'string') {
+            return cleanProgressText(value.cmd, 200);
+        }
+
+        if (typeof value.program === 'string' && Array.isArray(value.args)) {
+            return cleanProgressText([value.program, ...value.args.map((item) => String(item))].join(' '), 200);
+        }
+    }
+
+    return '';
+}
+
+function extractCommandFromItem(item) {
+    if (!item || typeof item !== 'object') {
+        return '';
+    }
+
+    return (
+        describeCommandValue(item.command) ||
+        describeCommandValue(item.cmd) ||
+        describeCommandValue(item.argv) ||
+        describeCommandValue(item.shell_command) ||
+        describeCommandValue(item.exec) ||
+        describeCommandValue(item.payload?.command) ||
+        describeCommandValue(item.input?.command)
+    );
+}
+
+function extractPathFromItem(item) {
+    if (!item || typeof item !== 'object') {
+        return '';
+    }
+
+    const directKeys = ['path', 'file_path', 'filePath', 'target_path', 'targetPath', 'relative_path', 'uri'];
+    for (const key of directKeys) {
+        const value = item[key];
+        if (typeof value === 'string' && value.trim()) {
+            return value.trim();
+        }
+    }
+
+    const nestedKeys = ['file', 'target', 'payload', 'input'];
+    for (const key of nestedKeys) {
+        const nested = item[key];
+        if (nested && typeof nested === 'object') {
+            const candidate = extractPathFromItem(nested);
+            if (candidate) {
+                return candidate;
+            }
+        }
+    }
+
+    return '';
+}
+
+function extractExitCode(item) {
+    if (!item || typeof item !== 'object') {
+        return null;
+    }
+
+    const candidates = [item.exit_code, item.exitCode, item.status_code, item.statusCode, item.code];
+    for (const candidate of candidates) {
+        if (Number.isInteger(candidate)) {
+            return candidate;
+        }
+    }
+
+    const nestedKeys = ['result', 'payload', 'output'];
+    for (const key of nestedKeys) {
+        const nested = item[key];
+        if (nested && typeof nested === 'object') {
+            const candidate = extractExitCode(nested);
+            if (candidate !== null) {
+                return candidate;
+            }
+        }
+    }
+
+    return null;
+}
+
+function summarizeItemLifecycle(item, phase) {
+    const itemType = String(item?.type || '').trim().toLowerCase();
+    if (!itemType) {
+        return null;
+    }
+
+    if (itemType.includes('message')) {
+        return null;
+    }
+
+    if (itemType.includes('reason')) {
+        return phase === 'started' ? 'Reasoning through the task.' : null;
+    }
+
+    if (itemType === 'error') {
+        return item?.message ? `Notice: ${item.message}` : 'Notice: agent reported an error.';
+    }
+
+    const command = extractCommandFromItem(item);
+    if (command && ['command', 'shell', 'exec', 'terminal'].some((token) => itemType.includes(token))) {
+        const exitCode = extractExitCode(item);
+        if (phase === 'started') {
+            return `Running command: ${command}`;
+        }
+
+        if (phase === 'completed') {
+            return exitCode !== null
+                ? `Command finished (exit ${exitCode}): ${command}`
+                : `Command finished: ${command}`;
+        }
+
+        return `Command update: ${command}`;
+    }
+
+    const filePath = extractPathFromItem(item);
+    if (filePath && ['file', 'patch', 'write', 'edit'].some((token) => itemType.includes(token))) {
+        if (phase === 'started') {
+            return `Editing ${filePath}`;
+        }
+
+        if (phase === 'completed') {
+            return `Updated ${filePath}`;
+        }
+
+        return `Working on ${filePath}`;
+    }
+
+    if (itemType.includes('plan')) {
+        return phase === 'completed' ? 'Plan updated.' : 'Updating plan.';
+    }
+
+    if (phase === 'started') {
+        return `Started ${humanizeToken(itemType)}.`;
+    }
+
+    if (phase === 'completed') {
+        return `Finished ${humanizeToken(itemType)}.`;
+    }
+
+    return `Updated ${humanizeToken(itemType)}.`;
+}
+
+function summarizeStructuredEvent(event) {
+    const type = String(event?.type || '').trim();
+    if (!type) {
+        return null;
+    }
+
+    if (type === 'thread.started') {
+        return event.thread_id ? `Session started (${shortId(event.thread_id)}).` : 'Session started.';
+    }
+
+    if (type === 'turn.started') {
+        return 'Turn started.';
+    }
+
+    if (type === 'turn.completed') {
+        return 'Turn completed.';
+    }
+
+    if (type === 'error') {
+        return event.message ? `Notice: ${event.message}` : 'Notice: agent reported an error.';
+    }
+
+    if (type === 'item.started') {
+        return summarizeItemLifecycle(event.item, 'started');
+    }
+
+    if (type === 'item.updated') {
+        return summarizeItemLifecycle(event.item, 'updated');
+    }
+
+    if (type === 'item.completed') {
+        return summarizeItemLifecycle(event.item, 'completed');
+    }
+
+    if (type.endsWith('.started')) {
+        return `Started ${humanizeToken(type.slice(0, -'.started'.length))}.`;
+    }
+
+    if (type.endsWith('.completed')) {
+        return `Finished ${humanizeToken(type.slice(0, -'.completed'.length))}.`;
+    }
+
+    return null;
+}
+
+function summarizeCodexTextLine(line) {
+    const trimmed = String(line || '').trim();
+    if (!trimmed) {
+        return null;
+    }
+
+    const ignoredPatterns = [
+        'WARNING: proceeding, even though we could not update PATH',
+        'state db discrepancy during find_thread_path_by_id_str_in_subdir',
+        'state_db: failed to read backfill state',
+        'shell_snapshot: Failed to create shell snapshot',
+        'startup websocket prewarm setup failed',
+        'responses_websocket: failed to connect to websocket',
+        'stream disconnected - retrying sampling request',
+        'attempt to write a readonly database'
+    ];
+
+    if (ignoredPatterns.some((pattern) => trimmed.includes(pattern))) {
+        return null;
+    }
+
+    if (trimmed.startsWith('Caused by:') || trimmed === 'Read-only file system (os error 30)') {
+        return null;
+    }
+
+    let cleaned = trimmed
+        .replace(/^\d{4}-\d{2}-\d{2}T\S+\s+(?:WARN|ERROR)\s+\S+:\s+/, '')
+        .replace(/^WARNING:\s+/, '')
+        .trim();
+
+    if (!cleaned) {
+        return null;
+    }
+
+    if (cleaned.includes('falling back to HTTP')) {
+        return 'Falling back to HTTPS transport.';
+    }
+
+    const looksOperational = /^\d{4}-\d{2}-\d{2}T/.test(trimmed) || /\b(?:warn|error|failed|fallback|timeout)\b/i.test(cleaned);
+    if (!looksOperational) {
+        return null;
+    }
+
+    return cleaned;
+}
+
+function handleCodexStreamLine({ line, reportProgress }) {
+    const trimmed = String(line || '').trim();
+    if (!trimmed) {
+        return;
+    }
+
+    try {
+        const event = JSON.parse(trimmed);
+        if (event && typeof event === 'object' && !Array.isArray(event)) {
+            const summary = summarizeStructuredEvent(event);
+            if (summary) {
+                reportProgress(summary);
+            }
+            return;
+        }
+    } catch {
+        // Fall through to raw line handling.
+    }
+
+    const summary = summarizeCodexTextLine(trimmed);
+    if (summary) {
+        reportProgress(summary);
+    }
+}
+
+async function runStreamingCommand(command, args, { cwd, role, timeout = DEFAULT_TIMEOUT_MS }) {
+    return new Promise((resolve) => {
+        const reportProgress = createProgressReporter(role);
+        reportProgress('Launching Codex CLI.');
+
+        const child = spawn(command, args, {
+            cwd,
+            stdio: ['ignore', 'pipe', 'pipe']
+        });
+
+        let stdout = '';
+        let stderr = '';
+        let settled = false;
+        let timedOut = false;
+        let forceKillTimer = null;
+
+        const finish = (result) => {
+            if (settled) {
+                return;
+            }
+
+            settled = true;
+            clearTimeout(killTimer);
+            if (forceKillTimer) {
+                clearTimeout(forceKillTimer);
+            }
+            resolve(result);
+        };
+
+        const attachReader = (stream, source) => {
+            const reader = createInterface({ input: stream });
+
+            reader.on('line', (line) => {
+                if (source === 'stdout') {
+                    stdout = appendBoundedText(stdout, `${line}\n`);
+                } else {
+                    stderr = appendBoundedText(stderr, `${line}\n`);
+                }
+
+                handleCodexStreamLine({ line, reportProgress });
+            });
+        };
+
+        attachReader(child.stdout, 'stdout');
+        attachReader(child.stderr, 'stderr');
+
+        const killTimer = setTimeout(() => {
+            timedOut = true;
+            reportProgress(`Timed out after ${Math.round(timeout / 60000)} minutes. Stopping agent.`);
+            child.kill('SIGTERM');
+            forceKillTimer = setTimeout(() => {
+                child.kill('SIGKILL');
+            }, 5000);
+            forceKillTimer.unref?.();
+        }, timeout);
+
+        child.on('error', (error) => {
+            finish({
+                ok: false,
+                code: null,
+                stdout,
+                stderr: appendBoundedText(stderr, `${error.message || String(error)}\n`),
+                timedOut,
+                signal: null
+            });
+        });
+
+        child.on('close', (code, signal) => {
+            if (timedOut) {
+                finish({
+                    ok: false,
+                    code,
+                    stdout,
+                    stderr,
+                    timedOut: true,
+                    signal
+                });
+                return;
+            }
+
+            finish({
+                ok: code === 0,
+                code,
+                stdout,
+                stderr,
+                timedOut: false,
+                signal
+            });
+        });
+    });
+}
+
 async function safeExecFile(command, args, options = {}) {
     try {
         const result = await execFileAsync(command, args, {
@@ -407,7 +829,7 @@ async function runCodexAgent({
     await writeJsonFile(schemaPath, schema);
 
     const codexBin = await resolveCodexBinary();
-    const args = ['exec', '--ephemeral', '-C', repoRoot, '--output-schema', schemaPath, '-o', outputPath];
+    const args = ['exec', '--ephemeral', '--json', '-C', repoRoot, '--output-schema', schemaPath, '-o', outputPath];
 
     if (sandbox === 'workspace-write') {
         args.push('--full-auto');
@@ -436,7 +858,7 @@ async function runCodexAgent({
 
     args.push(prompt);
 
-    const result = await safeExecFile(codexBin, args, { cwd: repoRoot });
+    const result = await runStreamingCommand(codexBin, args, { cwd: repoRoot, role });
     if (!result.ok) {
         throw new Error(
             `${role} codex exec failed.\nstdout:\n${truncateText(result.stdout, 4000)}\n\nstderr:\n${truncateText(result.stderr, 4000)}`
@@ -939,7 +1361,7 @@ async function main() {
             useOss: options.useOss,
             localProvider: options.localProvider,
             sandbox: 'workspace-write',
-            reasoningEffort: 'medium'
+            reasoningEffort: 'xhigh'
         });
 
         const buildResult = await runShellCommand(options.buildCommand);
@@ -1000,7 +1422,7 @@ async function main() {
             useOss: options.useOss,
             localProvider: options.localProvider,
             sandbox: 'read-only',
-            reasoningEffort: 'low',
+            reasoningEffort: 'xhigh',
             images: visualEvidence.images.map((item) => item.file_path)
         });
 

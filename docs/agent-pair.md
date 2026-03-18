@@ -38,6 +38,8 @@ Each round looks like this:
 8. the reviewer returns a structured verdict
 9. if `approved=true`, the loop stops; otherwise the reviewer feedback is fed into the next writer round
 
+During `writer` and `reviewer` execution, the script now prints concise realtime progress logs from `codex exec`. These are execution-stage logs, not a dump of the model's full internal reasoning text.
+
 ## Run it
 
 Set the optional environment variables in `.env` or your shell:
