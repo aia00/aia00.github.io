@@ -113,6 +113,29 @@ Returns whole-site totals by page type.
 
 Returns view counts for a specific path.
 
+## 6. View blog counts locally
+
+Once `.env` contains `PUBLIC_ANALYTICS_ENDPOINT`, you can inspect the most-viewed blog posts from the project root:
+
+```bash
+npm run analytics:blogs
+```
+
+To request a different number of posts:
+
+```bash
+npm run analytics:blogs -- --limit=10
+```
+
+This command maps the Worker response back to your local blog titles and prints a table with:
+
+- rank
+- title
+- slug
+- views
+- published date
+- last seen time
+
 ## Notes
 
 - The site-side script respects `Do Not Track`.

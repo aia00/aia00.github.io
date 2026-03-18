@@ -6,9 +6,23 @@ const analyticsEndpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT || '').trim
     (() => {
         const endpoint = analyticsEndpoint?.replace(/\/+$/, '');
         const TRACK_WINDOW_MS = 30 * 60 * 1000;
+        const debugEnabled = new URLSearchParams(window.location.search).get('analytics_debug') === '1';
 
         if (!endpoint) {
             return;
+        }
+
+        function debugLog(message, details) {
+            if (!debugEnabled) {
+                return;
+            }
+
+            if (typeof details === 'undefined') {
+                console.info('[analytics]', message);
+                return;
+            }
+
+            console.info('[analytics]', message, details);
         }
 
         function getPagePayload(pathname) {
@@ -66,14 +80,23 @@ const analyticsEndpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT || '').trim
             const pathname = window.location.pathname;
 
             if (!shouldTrack(pathname)) {
+                debugLog('skipped non-trackable path', { pathname });
                 return;
             }
 
             if (navigator.doNotTrack === '1' || window.doNotTrack === '1') {
+                debugLog('skipped because do-not-track is enabled', { pathname });
                 return;
             }
 
-            if (pathname === lastTrackedPath || alreadyTrackedRecently(pathname)) {
+            if (pathname === lastTrackedPath) {
+                debugLog('deduped repeated in-memory navigation', { pathname });
+                lastTrackedPath = pathname;
+                return;
+            }
+
+            if (alreadyTrackedRecently(pathname)) {
+                debugLog('deduped by localStorage window', { pathname, windowMs: TRACK_WINDOW_MS });
                 lastTrackedPath = pathname;
                 return;
             }
@@ -88,24 +111,46 @@ const analyticsEndpoint = (import.meta.env.PUBLIC_ANALYTICS_ENDPOINT || '').trim
 
             const body = JSON.stringify(payload);
             const url = `${endpoint}/track`;
+            debugLog('tracking page view', payload);
 
             try {
                 if (navigator.sendBeacon) {
                     const blob = new Blob([body], { type: 'application/json' });
-                    navigator.sendBeacon(url, blob);
-                    return;
+                    const queued = navigator.sendBeacon(url, blob);
+                    debugLog('sendBeacon attempted', { pathname, queued });
+
+                    if (queued === true) {
+                        return;
+                    }
                 }
-            } catch {
-                // Fall back to fetch below.
+            } catch (error) {
+                debugLog('sendBeacon threw; falling back to fetch', {
+                    pathname,
+                    error: error instanceof Error ? error.message : String(error)
+                });
             }
 
+            debugLog('falling back to fetch keepalive', { pathname });
             fetch(url, {
                 method: 'POST',
                 mode: 'cors',
                 headers: { 'Content-Type': 'application/json' },
                 body,
                 keepalive: true
-            }).catch(() => {});
+            })
+                .then((response) => {
+                    debugLog('fetch fallback completed', {
+                        pathname,
+                        status: response.status,
+                        ok: response.ok
+                    });
+                })
+                .catch((error) => {
+                    debugLog('fetch fallback failed', {
+                        pathname,
+                        error: error instanceof Error ? error.message : String(error)
+                    });
+                });
         }
 
         if (window.__siteAnalyticsHandler) {

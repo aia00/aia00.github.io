@@ -1,73 +1,66 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="900" viewBox="0 0 1320 900" role="img" aria-labelledby="title desc">
   <title id="title">MCP and Skills in an agent stack</title>
-  <desc id="desc">A layered diagram showing users, an agent runtime, skills, MCP client, MCP servers, and external systems.</desc>
+  <desc id="desc">A clearer layered diagram showing user request, agent runtime, skills, MCP layer, and external systems.</desc>
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0%" stop-color="#f4efe3"/>
       <stop offset="100%" stop-color="#e6eef5"/>
     </linearGradient>
     <style>
-      .label { font: 700 30px Georgia, serif; fill: #18222d; }
-      .small { font: 500 22px Georgia, serif; fill: #223140; }
-      .tiny { font: 500 17px Georgia, serif; fill: #304355; }
-      .box { rx: 22; ry: 22; stroke: #24384a; stroke-width: 3; }
-      .arrow { stroke: #24384a; stroke-width: 4; fill: none; marker-end: url(#m); }
+      .label { font: 700 34px Georgia, serif; fill: #18222d; }
+      .small { font: 500 26px Georgia, serif; fill: #223140; }
+      .tiny { font: 500 21px Georgia, serif; fill: #304355; }
+      .box { rx: 24; ry: 24; stroke: #24384a; stroke-width: 3; }
+      .arrow { stroke: #24384a; stroke-width: 5; fill: none; marker-end: url(#m); }
     </style>
     <marker id="m" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
       <path d="M0,0 L12,6 L0,12 z" fill="#24384a"/>
     </marker>
   </defs>
 
-  <rect width="1200" height="760" fill="url(#bg)"/>
+  <rect width="1320" height="900" fill="url(#bg)"/>
 
-  <text x="70" y="80" class="label">MCP is the interface. Skills are the workflow.</text>
+  <text x="68" y="82" class="label">MCP is the interface. Skills are the workflow.</text>
 
-  <rect x="70" y="130" width="1060" height="126" class="box" fill="#fffaf0"/>
-  <text x="110" y="180" class="small">User request</text>
-  <text x="110" y="210" class="tiny">
-    <tspan x="110" dy="0">"Investigate this bug, check the logs, update the ticket,</tspan>
-    <tspan x="110" dy="24">and propose a fix."</tspan>
-  </text>
+  <rect x="70" y="125" width="1180" height="150" class="box" fill="#fffaf0"/>
+  <text x="110" y="184" class="small">User request</text>
+  <text x="110" y="224" class="tiny">Investigate this bug, check the logs,</text>
+  <text x="110" y="254" class="tiny">update the ticket, and propose a fix.</text>
 
-  <rect x="70" y="290" width="470" height="260" class="box" fill="#f7f4d9"/>
-  <text x="100" y="340" class="small">Agent runtime</text>
-  <text x="100" y="380" class="tiny">- task planning</text>
-  <text x="100" y="412" class="tiny">- model reasoning</text>
-  <text x="100" y="444" class="tiny">- permission checks</text>
-  <text x="100" y="476" class="tiny">- result synthesis</text>
+  <rect x="70" y="320" width="500" height="330" class="box" fill="#f7f4d9"/>
+  <text x="106" y="384" class="small">Agent runtime</text>
+  <text x="106" y="432" class="tiny">- task planning</text>
+  <text x="106" y="466" class="tiny">- model reasoning</text>
+  <text x="106" y="500" class="tiny">- permission checks</text>
+  <text x="106" y="534" class="tiny">- result synthesis</text>
 
-  <rect x="300" y="355" width="200" height="145" class="box" fill="#dbe9f6"/>
-  <text x="336" y="398" class="small">Skills</text>
-  <text x="326" y="432" class="tiny">instructions</text>
-  <text x="338" y="460" class="tiny">scripts</text>
-  <text x="330" y="488" class="tiny">runbooks</text>
+  <rect x="312" y="400" width="210" height="165" class="box" fill="#dbe9f6"/>
+  <text x="366" y="452" class="small">Skills</text>
+  <text x="344" y="492" class="tiny">instructions</text>
+  <text x="344" y="524" class="tiny">scripts</text>
+  <text x="344" y="556" class="tiny">runbooks</text>
 
-  <rect x="660" y="290" width="470" height="260" class="box" fill="#efe6dc"/>
-  <text x="690" y="340" class="small">MCP layer</text>
-  <rect x="700" y="375" width="150" height="120" class="box" fill="#f7efe8"/>
-  <text x="730" y="425" class="small">Client</text>
-  <text x="724" y="458" class="tiny">discovers</text>
-  <text x="724" y="484" class="tiny">capabilities</text>
-  <rect x="900" y="355" width="190" height="145" class="box" fill="#fdf6ef"/>
-  <text x="940" y="398" class="small">Servers</text>
-  <text x="938" y="432" class="tiny">tools</text>
-  <text x="924" y="460" class="tiny">resources</text>
-  <text x="936" y="488" class="tiny">prompts</text>
+  <rect x="750" y="320" width="500" height="330" class="box" fill="#efe6dc"/>
+  <text x="786" y="384" class="small">MCP layer</text>
 
-  <rect x="70" y="600" width="1060" height="120" class="box" fill="#ffffff"/>
-  <text x="105" y="655" class="small">External systems exposed through MCP</text>
-  <text x="105" y="684" class="tiny">
-    <tspan x="105" dy="0">GitHub, databases, docs, Figma, deployment systems, observability,</tspan>
-    <tspan x="105" dy="24">and internal APIs</tspan>
-  </text>
+  <rect x="796" y="430" width="170" height="145" class="box" fill="#f7efe8"/>
+  <text x="840" y="484" class="small">Client</text>
+  <text x="824" y="524" class="tiny">discovers</text>
+  <text x="812" y="554" class="tiny">capabilities</text>
 
-  <path d="M600 185 L600 255" class="arrow"/>
-  <path d="M540 420 L655 420" class="arrow"/>
-  <path d="M775 500 L775 590" class="arrow"/>
-  <path d="M995 500 L995 590" class="arrow"/>
+  <rect x="1030" y="412" width="180" height="175" class="box" fill="#fdf6ef"/>
+  <text x="1078" y="466" class="small">Servers</text>
+  <text x="1072" y="506" class="tiny">tools</text>
+  <text x="1060" y="538" class="tiny">resources</text>
+  <text x="1070" y="570" class="tiny">prompts</text>
 
-  <text x="562" y="276" class="tiny">agent decides</text>
-  <text x="577" y="302" class="tiny">what to use</text>
-  <text x="570" y="404" class="tiny">workflow</text>
-  <text x="576" y="430" class="tiny">guidance</text>
+  <rect x="70" y="710" width="1180" height="140" class="box" fill="#ffffff"/>
+  <text x="108" y="772" class="small">External systems exposed through MCP</text>
+  <text x="108" y="814" class="tiny">GitHub, databases, docs, Figma, deployment systems,</text>
+  <text x="108" y="844" class="tiny">observability platforms, and internal APIs</text>
+
+  <path d="M660 212 L660 300" class="arrow"/>
+  <path d="M570 486 L736 486" class="arrow"/>
+  <path d="M880 575 L880 698" class="arrow"/>
+  <path d="M1120 587 L1120 698" class="arrow"/>
 </svg>

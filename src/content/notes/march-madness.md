@@ -1,6 +1,6 @@
 ---
 title: "March Madness"
-excerpt: "A short note on why March Madness is so compelling: volatility, matchups, and the strange beauty of single-elimination basketball."
+excerpt: "Some thoughts on basketball."
 publishDate: '2026-03-17T16:30:00-04:00'
 isFeatured: false
 tags:
@@ -8,7 +8,7 @@ tags:
   - Sports
 seo:
   title: "March Madness"
-  description: "Some thoughts on basketball"
+  description: "Some thoughts on basketball."
 ---
 
 ## RJ & CW

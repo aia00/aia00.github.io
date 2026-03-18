@@ -1,15 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="760" viewBox="0 0 1280 760" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="840" viewBox="0 0 1320 840" role="img" aria-labelledby="title desc">
   <title id="title">Breast cancer gene-expression modules and PAM50</title>
-  <desc id="desc">Simplified diagram showing four core breast cancer gene-expression modules and how they connect to PAM50 tendencies and pathology readouts.</desc>
+  <desc id="desc">A clearer diagram showing how coordinated gene-expression modules relate to PAM50 tendencies and pathology readouts.</desc>
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0%" stop-color="#f5eee6"/>
       <stop offset="100%" stop-color="#e7eff5"/>
     </linearGradient>
     <style>
-      .title { font: 700 34px Georgia, serif; fill: #1f2b33; }
-      .head { font: 700 22px Georgia, serif; fill: #243642; }
-      .body { font: 500 16px Georgia, serif; fill: #344955; }
+      .title { font: 700 40px Georgia, serif; fill: #1f2b33; }
+      .head { font: 700 26px Georgia, serif; fill: #243642; }
+      .body { font: 500 21px Georgia, serif; fill: #344955; }
       .box { rx: 22; ry: 22; stroke: #29404d; stroke-width: 3; }
       .arrow { stroke: #29404d; stroke-width: 4; fill: none; marker-end: url(#m); }
     </style>
@@ -18,47 +18,49 @@
     </marker>
   </defs>
 
-  <rect width="1280" height="760" fill="url(#bg)"/>
+  <rect width="1320" height="840" fill="url(#bg)"/>
   <text x="70" y="78" class="title">Breast cancer subtypes can be understood as combinations of modules</text>
 
-  <rect x="80" y="120" width="1120" height="95" class="box" fill="#fff9f2"/>
-  <text x="115" y="166" class="head">Expression data from breast tumors</text>
-  <text x="115" y="196" class="body">coordinated programs are often more stable and interpretable than isolated single genes</text>
+  <rect x="80" y="118" width="1160" height="132" class="box" fill="#fff9f2"/>
+  <text x="110" y="176" class="head">Expression data from breast tumors</text>
+  <text x="110" y="206" class="body">Coordinated programs are often more stable and more interpretable</text>
+  <text x="110" y="236" class="body">than isolated single genes.</text>
 
-  <rect x="105" y="285" width="190" height="115" class="box" fill="#f5e4d7"/>
-  <text x="148" y="335" class="head">Luminal</text>
-  <text x="138" y="366" class="body">ER-linked lineage</text>
+  <rect x="95" y="304" width="220" height="128" class="box" fill="#f5e4d7"/>
+  <text x="205" y="370" class="head" text-anchor="middle">Luminal</text>
+  <text x="205" y="400" class="body" text-anchor="middle">ER-linked lineage</text>
 
-  <rect x="340" y="285" width="220" height="115" class="box" fill="#edf0ce"/>
-  <text x="382" y="335" class="head">Proliferation</text>
-  <text x="396" y="366" class="body">cell cycle and growth</text>
+  <rect x="365" y="304" width="240" height="128" class="box" fill="#edf0ce"/>
+  <text x="485" y="370" class="head" text-anchor="middle">Proliferation</text>
+  <text x="485" y="400" class="body" text-anchor="middle">cell cycle and growth</text>
 
-  <rect x="610" y="285" width="190" height="115" class="box" fill="#dceaf6"/>
-  <text x="664" y="335" class="head">HER2</text>
-  <text x="648" y="366" class="body">ERBB2-related signal</text>
+  <rect x="655" y="304" width="220" height="128" class="box" fill="#dceaf6"/>
+  <text x="765" y="370" class="head" text-anchor="middle">HER2</text>
+  <text x="765" y="400" class="body" text-anchor="middle">ERBB2-related signal</text>
 
-  <rect x="850" y="285" width="210" height="115" class="box" fill="#eee1f3"/>
-  <text x="915" y="335" class="head">Basal</text>
-  <text x="895" y="366" class="body">less differentiated state</text>
+  <rect x="925" y="304" width="220" height="128" class="box" fill="#eee1f3"/>
+  <text x="1035" y="370" class="head" text-anchor="middle">Basal</text>
+  <text x="1035" y="400" class="body" text-anchor="middle">less differentiated state</text>
 
-  <rect x="180" y="500" width="410" height="165" class="box" fill="#fffdf7"/>
-  <text x="310" y="552" class="head">PAM50 tendencies</text>
-  <text x="215" y="586" class="body">Luminal A: luminal high, proliferation lower</text>
-  <text x="215" y="614" class="body">Luminal B: luminal plus higher proliferation</text>
-  <text x="215" y="642" class="body">HER2-enriched: HER2-related program stronger</text>
+  <rect x="150" y="544" width="450" height="180" class="box" fill="#fffdf7"/>
+  <text x="375" y="606" class="head" text-anchor="middle">PAM50 tendencies</text>
+  <text x="200" y="646" class="body">Luminal A: luminal high, proliferation lower</text>
+  <text x="200" y="678" class="body">Luminal B: luminal plus higher proliferation</text>
+  <text x="200" y="710" class="body">HER2-enriched: HER2-related program stronger</text>
 
-  <rect x="670" y="500" width="430" height="165" class="box" fill="#eef5fa"/>
-  <text x="810" y="552" class="head">Pathology readouts</text>
-  <text x="705" y="586" class="body">H&amp;E: grade, architecture, necrosis, immune context</text>
-  <text x="705" y="614" class="body">IHC: ER / PR / HER2 / Ki-67 as targeted markers</text>
-  <text x="705" y="642" class="body">Clinical meaning: subtype, risk, treatment relevance</text>
+  <rect x="690" y="544" width="470" height="180" class="box" fill="#eef5fa"/>
+  <text x="925" y="606" class="head" text-anchor="middle">Pathology readouts</text>
+  <text x="730" y="646" class="body">H&amp;E: grade, necrosis, immune context</text>
+  <text x="730" y="678" class="body">IHC: ER / PR / HER2 / Ki-67 markers</text>
+  <text x="730" y="710" class="body">Clinical meaning: subtype, risk, treatment</text>
 
-  <path d="M640 215 L640 255" class="arrow"/>
-  <path d="M200 400 L320 490" class="arrow"/>
-  <path d="M450 400 L450 490" class="arrow"/>
-  <path d="M705 400 L470 490" class="arrow"/>
-  <path d="M955 400 L860 490" class="arrow"/>
-  <path d="M590 585 L655 585" class="arrow"/>
+  <path d="M660 250 L660 280" class="arrow"/>
+  <path d="M205 432 L330 532" class="arrow"/>
+  <path d="M485 432 L485 532" class="arrow"/>
+  <path d="M765 432 L500 532" class="arrow"/>
+  <path d="M1035 432 L910 532" class="arrow"/>
+  <path d="M600 634 L670 634" class="arrow"/>
 
-  <text x="82" y="715" class="body">Modules are groups of genes that move together; PAM50 subtypes summarize characteristic combinations of those programs.</text>
+  <rect x="80" y="756" width="1160" height="60" class="box" fill="#ffffff"/>
+  <text x="110" y="794" class="body">Modules are groups of genes that move together; PAM50 summarizes their characteristic combinations.</text>
 </svg>
