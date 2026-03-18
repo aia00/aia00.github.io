@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, '..');
 const envPath = path.join(repoRoot, '.env');
 
-const DEFAULT_WRITER_MODEL = 'gpt-5.2-codex';
+const DEFAULT_WRITER_MODEL = 'gpt-5.4';
 const DEFAULT_REVIEWER_MODEL = 'gpt-5.4';
 const DEFAULT_MAX_ROUNDS = 4;
 const DEFAULT_MAX_REVIEW_ROUTES = 3;

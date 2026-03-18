@@ -43,7 +43,7 @@ Each round looks like this:
 Set the optional environment variables in `.env` or your shell:
 
 ```bash
-CODEX_WRITER_MODEL="gpt-5.2-codex"
+CODEX_WRITER_MODEL="gpt-5.4"
 CODEX_REVIEWER_MODEL="gpt-5.4"
 CODEX_VISUAL_BROWSER="google-chrome-stable"
 ```
