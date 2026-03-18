@@ -66,7 +66,7 @@ Options:
   --disable-visual-review    Skip screenshot capture and visual evidence.
   --oss                      Use Codex local OSS provider instead of the default provider.
   --local-provider=NAME      Local OSS provider: ollama or lmstudio.
-  --allow-dirty              Allow running when git status is not clean.
+  --allow-dirty              Deprecated no-op. Dirty worktrees are allowed by default.
   --help                     Show this message.
 
 Environment:
@@ -357,6 +357,39 @@ async function writeJsonFile(filePath, value) {
     await fs.writeFile(filePath, JSON.stringify(value, null, 2), 'utf8');
 }
 
+async function resolveCodexBinary() {
+    const explicit = String(process.env.CODEX_BIN || '').trim();
+    if (explicit) {
+        const result = await safeExecFile(explicit, ['--version']);
+        if (result.ok) {
+            return explicit;
+        }
+        throw new Error(`CODEX_BIN is set but not executable: ${explicit}`);
+    }
+
+    const fromPath = await runShellCommand('command -v codex');
+    const pathCandidate = (fromPath.stdout || '').trim().split('\n')[0]?.trim();
+    if (fromPath.ok && pathCandidate) {
+        const result = await safeExecFile(pathCandidate, ['--version']);
+        if (result.ok) {
+            return pathCandidate;
+        }
+    }
+
+    const vscodeCandidate = await runShellCommand('ls -dt "$HOME"/.vscode-server/extensions/openai.chatgpt-*/bin/linux-x86_64/codex 2>/dev/null | head -n 1');
+    const vscodePath = (vscodeCandidate.stdout || '').trim().split('\n')[0]?.trim();
+    if (vscodePath) {
+        const result = await safeExecFile(vscodePath, ['--version']);
+        if (result.ok) {
+            return vscodePath;
+        }
+    }
+
+    throw new Error(
+        'Could not find a working codex binary. Set CODEX_BIN explicitly or make sure "codex" is available in PATH.'
+    );
+}
+
 async function runCodexAgent({
     role,
     prompt,
@@ -373,7 +406,7 @@ async function runCodexAgent({
     const outputPath = path.join(tempDirectory, `${role}-output.json`);
     await writeJsonFile(schemaPath, schema);
 
-    const codexBin = process.env.CODEX_BIN || 'codex';
+    const codexBin = await resolveCodexBinary();
     const args = ['exec', '--ephemeral', '-C', repoRoot, '--output-schema', schemaPath, '-o', outputPath];
 
     if (sandbox === 'workspace-write') {
@@ -864,10 +897,6 @@ async function main() {
 
     const startingStatus = await getGitStatusOutput();
     const baselineChangedFiles = await getChangedFiles();
-    if (startingStatus && !options.allowDirty) {
-        console.error('Git worktree is not clean. Commit or stash unrelated changes, or rerun with --allow-dirty.');
-        process.exit(1);
-    }
 
     const baselineWarning = startingStatus
         ? `Warning: the repository already had local changes before the loop started.\n${startingStatus}`
@@ -884,6 +913,7 @@ async function main() {
             `Visual review enabled: ${options.visualReview}`,
             `Max review routes: ${options.maxReviewRoutes}`,
             `Build command: ${options.buildCommand}`,
+            `Baseline changed files: ${baselineChangedFiles.length}`,
             `Task: ${task}`
         ].join('\n')
     );

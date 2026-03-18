@@ -68,7 +68,8 @@ Useful flags:
 - `--disable-visual-review`
 - `--oss`
 - `--local-provider=ollama`
-- `--allow-dirty`
+
+Dirty worktrees are allowed by default. Pre-existing modified files are treated as baseline context and are excluded from the "newly changed this round" view used by the loop.
 
 ## Prerequisites
 
