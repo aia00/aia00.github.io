@@ -11,6 +11,32 @@
         --color-bg-muted: 234 233 225; /* #EAE9E1 */
         --color-border-main: 23 23 23; /* #171717 */
     }
+
+    *,
+    ::before,
+    ::after {
+        box-sizing: border-box;
+    }
+
+    html,
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-x: clip;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    img,
+    video,
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+
     html.dark {
         --color-text-main: 242 241 236; /* #F2F1EC */
         --color-bg-main: 23 23 23; /* #171717 */
@@ -64,9 +90,61 @@
 }
 
 @layer components {
+    .site-shell {
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-x: clip;
+    }
+
+    .site-shell > * {
+        min-width: 0;
+    }
+
+    @supports (width: 100dvw) {
+        .site-shell {
+            width: min(100%, 100dvw);
+            max-width: 100dvw;
+        }
+    }
+
+    .blog-article-shell,
+    .blog-article-header,
+    .blog-article-prose {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .blog-article-shell {
+        overflow-x: clip;
+    }
+
+    .blog-article-shell > *,
+    .blog-article-prose > * {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .blog-article-prose :where(p, li, blockquote, h1, h2, h3, h4, h5, h6, a, code, figcaption) {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .blog-article-prose :where(ol, ul) {
+        padding-left: clamp(1.15rem, 4vw, 1.5rem);
+    }
+
+    .prose :where(a, code, figcaption) {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
     .prose-blog-figures :where(img) {
         display: block;
         width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
         margin-inline: auto;
         border: 1px solid rgb(var(--color-border-main) / 0.14);
         border-radius: 1.5rem;
@@ -83,6 +161,8 @@
     .prose-blog-figures :where(figure) {
         margin-top: 2rem;
         margin-bottom: 2rem;
+        max-width: 100%;
+        box-sizing: border-box;
         border: 1px solid rgb(var(--color-border-main) / 0.14);
         border-radius: 1.5rem;
         background: linear-gradient(180deg, rgb(var(--color-bg-muted) / 0.9), rgb(var(--color-bg-main) / 0.98));
@@ -102,5 +182,11 @@
     .prose-blog-figures :where(figcaption) {
         margin-top: 0.85rem;
         text-align: center;
+    }
+
+    @media (max-width: 639px) {
+        .blog-article-header {
+            margin-bottom: 2.25rem;
+        }
     }
 }

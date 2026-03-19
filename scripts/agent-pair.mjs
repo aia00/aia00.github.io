@@ -15,15 +15,14 @@ const envPath = path.join(repoRoot, '.env');
 
 const DEFAULT_WRITER_MODEL = 'gpt-5.4';
 const DEFAULT_REVIEWER_MODEL = 'gpt-5.4';
-const DEFAULT_MAX_ROUNDS = 4;
+const DEFAULT_MAX_ROUNDS = 6;
 const DEFAULT_MAX_REVIEW_ROUTES = 3;
 const DEFAULT_BUILD_COMMAND = 'npm run build';
 const DEFAULT_TIMEOUT_MS = 20 * 60 * 1000;
 const MAX_OUTPUT_CHARS = 24000;
 const VISUAL_BROWSER_CANDIDATES = ['google-chrome-stable', 'google-chrome', 'chromium-browser', 'chromium'];
 const VISUAL_VIEWPORTS = [
-    { name: 'desktop', width: 1600, height: 1200 },
-    { name: 'mobile', width: 390, height: 844 }
+    { name: 'desktop', width: 1600, height: 1200 }
 ];
 
 const WRITER_SCHEMA = {
@@ -39,7 +38,19 @@ const WRITER_SCHEMA = {
     required: ['summary', 'changed_files', 'validation', 'review_routes', 'unresolved_risks']
 };
 
-const REVIEWER_SCHEMA = {
+const CODE_REVIEWER_SCHEMA = {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+        approved: { type: 'boolean' },
+        summary: { type: 'string' },
+        must_fix: { type: 'array', items: { type: 'string' } },
+        nice_to_have: { type: 'array', items: { type: 'string' } }
+    },
+    required: ['approved', 'summary', 'must_fix', 'nice_to_have']
+};
+
+const VISUAL_REVIEWER_SCHEMA = {
     type: 'object',
     additionalProperties: false,
     properties: {
@@ -53,14 +64,25 @@ const REVIEWER_SCHEMA = {
     required: ['approved', 'summary', 'must_fix', 'nice_to_have', 'visual_summary', 'visual_limitations']
 };
 
+const SCREENSHOT_PLANNER_SCHEMA = {
+    type: 'object',
+    additionalProperties: false,
+    properties: {
+        should_capture: { type: 'boolean' },
+        routes: { type: 'array', items: { type: 'string' } },
+        summary: { type: 'string' }
+    },
+    required: ['should_capture', 'routes', 'summary']
+};
+
 const HELP_TEXT = `Usage:
   npm run agent:pair -- --task="your request"
   npm run agent:pair -- "your request"
 
 Options:
-  --task=TEXT                Task for the writer/reviewer pair.
+  --task=TEXT                Task for the writer + screenshot-planner + two-reviewer loop.
   --writer-model=MODEL       Default: ${DEFAULT_WRITER_MODEL}
-  --reviewer-model=MODEL     Default: ${DEFAULT_REVIEWER_MODEL}
+  --reviewer-model=MODEL     Shared default for both reviewers: ${DEFAULT_REVIEWER_MODEL}
   --max-rounds=N             Default: ${DEFAULT_MAX_ROUNDS}
   --max-review-routes=N      Max visual review routes. Default: ${DEFAULT_MAX_REVIEW_ROUTES}
   --build-command=CMD        Validation command after each writer round. Default: "${DEFAULT_BUILD_COMMAND}"
@@ -72,7 +94,7 @@ Options:
 
 Environment:
   CODEX_WRITER_MODEL         Optional writer model override.
-  CODEX_REVIEWER_MODEL       Optional reviewer model override.
+  CODEX_REVIEWER_MODEL       Optional shared reviewer model override.
   CODEX_DISABLE_VISUAL_REVIEW=1  Optional hard disable for screenshot-based review.
   CODEX_VISUAL_BROWSER       Optional browser binary override for screenshots.
   CODEX_USE_OSS=1            Optional default to local OSS provider.
@@ -188,7 +210,7 @@ function parseArgs(argv) {
         }
 
         if (arg.startsWith('--max-rounds=')) {
-            options.maxRounds = clampInt(arg.slice('--max-rounds='.length), DEFAULT_MAX_ROUNDS, 1, 12);
+            options.maxRounds = clampInt(arg.slice('--max-rounds='.length), DEFAULT_MAX_ROUNDS, 1, 16);
             continue;
         }
 
@@ -464,6 +486,87 @@ function extractExitCode(item) {
     return null;
 }
 
+function collectMessageFragments(value, fragments, depth = 0) {
+    if (depth > 5 || fragments.length >= 4 || value === null || typeof value === 'undefined') {
+        return;
+    }
+
+    if (typeof value === 'string') {
+        const cleaned = cleanProgressText(value, 180);
+        if (!cleaned) {
+            return;
+        }
+
+        const noisyPrefixes = [
+            '/bin/bash',
+            'bash -lc',
+            'sed -n',
+            'rg -n',
+            'git ',
+            'npm ',
+            'node ',
+            'python ',
+            'Running command:',
+            'Command finished',
+            'Updated ',
+            'Editing '
+        ];
+
+        if (noisyPrefixes.some((prefix) => cleaned.startsWith(prefix))) {
+            return;
+        }
+
+        fragments.push(cleaned);
+        return;
+    }
+
+    if (Array.isArray(value)) {
+        for (const entry of value) {
+            collectMessageFragments(entry, fragments, depth + 1);
+            if (fragments.length >= 4) {
+                break;
+            }
+        }
+        return;
+    }
+
+    if (typeof value !== 'object') {
+        return;
+    }
+
+    const preferredKeys = ['text', 'message', 'summary', 'output_text', 'delta', 'content', 'parts', 'items', 'value'];
+    for (const key of preferredKeys) {
+        if (!(key in value)) {
+            continue;
+        }
+
+        collectMessageFragments(value[key], fragments, depth + 1);
+        if (fragments.length >= 4) {
+            break;
+        }
+    }
+}
+
+function extractMessageText(payload) {
+    if (!payload || typeof payload !== 'object') {
+        return '';
+    }
+
+    const roleSignals = [payload.role, payload.author, payload.sender, payload.source]
+        .filter((value) => typeof value === 'string')
+        .join(' ')
+        .toLowerCase();
+
+    if (roleSignals.includes('user') || roleSignals.includes('system') || roleSignals.includes('developer')) {
+        return '';
+    }
+
+    const fragments = [];
+    collectMessageFragments(payload, fragments);
+
+    return Array.from(new Set(fragments)).join(' ');
+}
+
 function summarizeItemLifecycle(item, phase) {
     const itemType = String(item?.type || '').trim().toLowerCase();
     if (!itemType) {
@@ -471,7 +574,11 @@ function summarizeItemLifecycle(item, phase) {
     }
 
     if (itemType.includes('message')) {
-        return null;
+        if (phase === 'started') {
+            return null;
+        }
+
+        return extractMessageText(item) || null;
     }
 
     if (itemType.includes('reason')) {
@@ -546,6 +653,13 @@ function summarizeStructuredEvent(event) {
 
     if (type === 'error') {
         return event.message ? `Notice: ${event.message}` : 'Notice: agent reported an error.';
+    }
+
+    if (type.includes('message') || type.includes('assistant') || type.includes('text')) {
+        const messageText = extractMessageText(event);
+        if (messageText) {
+            return messageText;
+        }
     }
 
     if (type === 'item.started') {
@@ -1224,7 +1338,83 @@ async function collectVisualEvidence({ enabled, routes, maxRoutes }) {
     };
 }
 
-function buildWriterPrompt({ task, round, reviewerFeedback, baselineWarning, buildCommand }) {
+function buildScreenshotPlannerPrompt({
+    stage,
+    task,
+    round,
+    reviewerFeedback = '',
+    writerSummary = '',
+    buildResult = null,
+    suggestedRoutes = [],
+    actualChangedFiles = [],
+    baselineWarning
+}) {
+    const beforeWriter = stage === 'before-writer';
+
+    return [
+        'You are the screenshot planning agent for this repository.',
+        `Repository root: ${repoRoot}`,
+        `Planning stage: ${beforeWriter ? 'before writer' : 'before visual reviewer'}`,
+        `Current round: ${round}`,
+        `Original user task: ${task}`,
+        '',
+        baselineWarning,
+        '',
+        beforeWriter
+            ? reviewerFeedback
+                ? `Reviewer feedback from the previous round:\n${reviewerFeedback}`
+                : 'There is no reviewer feedback yet.'
+            : `Writer self-report:\n${writerSummary || '[empty]'}`,
+        '',
+        'Your job is to interpret the actual task type, not just keywords like "blog" or "page".',
+        'Think in terms of user-facing surfaces such as the homepage, content pages, shared layouts, components, images, typography, navigation, formulas, and figure rendering.',
+        '',
+        beforeWriter
+            ? 'Decide whether current-state screenshots would materially help the writer understand the problem before editing.'
+            : 'Decide whether screenshots should be captured for the visual reviewer this round, and which routes are the highest value.',
+        beforeWriter
+            ? '- Prefer screenshots before the writer only when the task is about fixing or diagnosing an existing visual problem.'
+            : '- Prefer screenshots before the visual reviewer when the change has user-facing impact and visual sign-off is meaningful.',
+        beforeWriter
+            ? '- Capture before the writer when the task is about an existing broken or unsatisfactory desktop rendered state: overflow, clipping, spacing, typography, image treatment, formula rendering, figure problems, navigation issues, hierarchy problems, or polishing an existing page/component.'
+            : '- Capture before the visual reviewer for changes that affect rendered UI, styling, copy presentation, images, layout, shared components, or any page the user will actually look at.',
+        beforeWriter
+            ? '- Skip before the writer for tasks that are mostly content generation from source files, hidden configuration, docs, analytics, metadata, build plumbing, or a brand-new artifact with no current visual state worth inspecting.'
+            : '- Skip before the visual reviewer only when the change is effectively non-visual or there is no meaningful user-facing route to inspect.',
+        beforeWriter
+            ? '- If reviewer feedback already points to a visual issue, that is strong evidence to capture screenshots before the writer.'
+            : '- Prefer routes that best represent the changed surface. For global UI changes, include representative routes rather than only one narrow page.',
+        beforeWriter
+            ? '- If the task is ambiguous, choose based on whether a human would need to see the current page to understand the problem before editing.'
+            : `- Suggested routes from the writer/orchestrator: ${cleanArray(suggestedRoutes).join(', ') || '[none]'}`,
+        beforeWriter
+            ? ''
+            : `- Changed files this round: ${cleanArray(actualChangedFiles).join(', ') || '[none]'}`,
+        buildResult
+            ? [
+                `- Build command: ${buildResult.command}`,
+                `- Build ok: ${buildResult.ok}`,
+                `- Exit code: ${buildResult.exit_code}`
+            ].join('\n')
+            : '',
+        '',
+        'Structured response requirements:',
+        '- should_capture: true only if screenshots are worth taking at this stage',
+        '- routes: 1-3 concrete user-facing routes like /, /about/, /blog/some-post/, /projects/some-project/',
+        '- summary: short rationale for the decision'
+    ]
+        .filter(Boolean)
+        .join('\n');
+}
+
+function buildWriterPrompt({
+    task,
+    round,
+    reviewerFeedback,
+    baselineWarning,
+    buildCommand,
+    preWriterVisualContext
+}) {
     return [
         'You are the writer agent for this repository.',
         `Repository root: ${repoRoot}`,
@@ -1235,12 +1425,17 @@ function buildWriterPrompt({ task, round, reviewerFeedback, baselineWarning, bui
             ? `Reviewer feedback from the previous round:\n${reviewerFeedback}`
             : 'There is no reviewer feedback yet. Start from the user task.',
         '',
+        'Pre-writer visual context:',
+        preWriterVisualContext || 'No pre-writer screenshots were captured for this round.',
+        '',
         baselineWarning,
         '',
         'Execution requirements:',
         '- Modify the repository directly as needed.',
         '- Keep scope tight to the user task and reviewer feedback.',
         '- Respect the existing project structure and style.',
+        '- If pre-change screenshots are attached, use them to understand the current visual problem before editing.',
+        '- Emit occasional one-sentence progress updates in plain language when you change phases; keep them short and do not reveal hidden chain-of-thought.',
         `- Before finishing, make sure the repo should still pass this validation command: ${buildCommand}`,
         '- Include review_routes for the pages that should be visually checked after this round.',
         '- If the change is global UI, include representative routes rather than only one page.',
@@ -1254,7 +1449,50 @@ function buildWriterPrompt({ task, round, reviewerFeedback, baselineWarning, bui
     ].join('\n');
 }
 
-function buildReviewerPrompt({
+function buildCodeReviewerPrompt({
+    task,
+    round,
+    writerPrompt,
+    writerSummary,
+    buildResult,
+    baselineWarning
+}) {
+    return [
+        'You are the code-and-content reviewer agent for this repository.',
+        `Repository root: ${repoRoot}`,
+        `Current round: ${round}`,
+        `Original user task: ${task}`,
+        '',
+        'Writer execution prompt:',
+        writerPrompt,
+        '',
+        'Writer self-report:',
+        writerSummary,
+        '',
+        baselineWarning,
+        '',
+        'Automatic validation result:',
+        `Build command: ${buildResult.command}`,
+        `Build ok: ${buildResult.ok}`,
+        `Exit code: ${buildResult.exit_code}`,
+        buildResult.stdout_tail ? `stdout:\n${buildResult.stdout_tail}` : 'stdout: [empty]',
+        buildResult.stderr_tail ? `stderr:\n${buildResult.stderr_tail}` : 'stderr: [empty]',
+        '',
+        'Review requirements:',
+        '- Inspect the actual repo state and current diff; do not trust the writer summary alone.',
+        '- Focus on code correctness, content correctness, factual and scientific reliability, regressions, broken builds, and whether the implementation actually satisfies the user task.',
+        '- Do not judge visual aesthetics here except when a correctness issue is obvious from the markup or styles.',
+        '- Emit occasional one-sentence progress updates in plain language while reviewing; keep them short and do not reveal hidden chain-of-thought.',
+        '',
+        'Structured response requirements:',
+        '- approved: true only if the current state is ready',
+        '- summary: overall judgment',
+        '- must_fix: blocking issues',
+        '- nice_to_have: non-blocking suggestions'
+    ].join('\n');
+}
+
+function buildVisualReviewerPrompt({
     task,
     round,
     writerPrompt,
@@ -1264,7 +1502,7 @@ function buildReviewerPrompt({
     baselineWarning
 }) {
     return [
-        'You are the reviewer agent for this repository.',
+        'You are the visual reviewer agent for this repository.',
         `Repository root: ${repoRoot}`,
         `Current round: ${round}`,
         `Original user task: ${task}`,
@@ -1288,16 +1526,21 @@ function buildReviewerPrompt({
         visualEvidence.summary,
         '',
         'Review requirements:',
-        '- Inspect the actual repo state and current diff; do not trust the writer summary alone.',
-        '- Use attached screenshots when available to judge layout, typography, spacing, and responsiveness.',
-        '- Block on correctness issues, broken builds, inconsistent content, or clearly weak layout.',
-        '- If screenshots are missing or insufficient, say so in visual_limitations.',
+        '- Review only the desktop screenshots provided for this round. Do not block on mobile behavior.',
+        '- Focus on desktop layout, typography, spacing, hierarchy, balance, and visual clarity.',
+        '- Check whether formulas and mathematical symbols render correctly and remain readable, without broken glyphs, missing math, or obvious layout corruption.',
+        '- Check whether embedded figures look polished: arrows should align, labels should be legible, and text should stay inside boxes or intended boundaries.',
+        '- Check the overall composition of each figure: the visual weight should feel balanced, key elements should have a clear focal structure, and the graphic should not feel cramped, lopsided, or visually confusing.',
+        '- Use attached screenshots when available to judge whether the page looks polished and whether UI, math, or embedded images are visually broken.',
+        '- If screenshots are missing or insufficient, say so in visual_limitations and avoid invented conclusions.',
+        '- Lack of screenshots alone should not block approval unless the user explicitly asked for strict visual sign-off or the available evidence suggests unresolved visual risk.',
+        '- Emit occasional one-sentence progress updates in plain language while reviewing; keep them short and do not reveal hidden chain-of-thought.',
         '',
         'Structured response requirements:',
-        '- approved: true only if the current state is ready',
-        '- summary: overall judgment',
-        '- must_fix: blocking issues',
-        '- nice_to_have: non-blocking suggestions',
+        '- approved: true only if the current visual state appears ready',
+        '- summary: overall visual judgment',
+        '- must_fix: blocking visual issues',
+        '- nice_to_have: non-blocking visual suggestions',
         '- visual_summary: what the screenshots suggest visually',
         '- visual_limitations: honest limit statement'
     ].join('\n');
@@ -1333,7 +1576,9 @@ async function main() {
         'Agent Pair',
         [
             `Writer model: ${writerModel}`,
-            `Reviewer model: ${reviewerModel}`,
+            `Screenshot planner model: ${reviewerModel}`,
+            `Code/content reviewer model: ${reviewerModel}`,
+            `Visual reviewer model: ${reviewerModel}`,
             `Use OSS provider: ${options.useOss}`,
             `Local provider: ${options.localProvider || '[default]'}`,
             `Max rounds: ${options.maxRounds}`,
@@ -1350,12 +1595,80 @@ async function main() {
     for (let round = 1; round <= options.maxRounds; round += 1) {
         printSection(`Round ${round}`, 'Writer turn started.');
 
+        let preWriterVisualContext = {
+            enabled: false,
+            images: [],
+            summary: options.visualReview
+                ? 'No pre-writer screenshots were captured for this round.'
+                : 'Visual review is disabled, so pre-writer screenshots were skipped.'
+        };
+
+        if (options.visualReview) {
+            const preWriterScreenshotPlan = await runCodexAgent({
+                role: 'screenshot-planner',
+                prompt: buildScreenshotPlannerPrompt({
+                    stage: 'before-writer',
+                    task,
+                    round,
+                    reviewerFeedback,
+                    baselineWarning
+                }),
+                schema: SCREENSHOT_PLANNER_SCHEMA,
+                model: reviewerModel,
+                useOss: options.useOss,
+                localProvider: options.localProvider,
+                sandbox: 'read-only',
+                reasoningEffort: 'high'
+            });
+
+            printSection(
+                'Pre-Writer Screenshot Plan',
+                [
+                    `Capture: ${Boolean(preWriterScreenshotPlan.should_capture)}`,
+                    `Routes: ${cleanArray(preWriterScreenshotPlan.routes).map(normalizeRoute).join(', ') || '[none]'}`,
+                    `Summary: ${preWriterScreenshotPlan.summary}`
+                ].join('\n')
+            );
+
+            if (preWriterScreenshotPlan.should_capture) {
+                const preWriterBuildResult = await runShellCommand(options.buildCommand);
+                const preWriterRoutes = cleanArray(preWriterScreenshotPlan.routes).map(normalizeRoute).slice(0, options.maxReviewRoutes);
+
+                preWriterVisualContext = preWriterBuildResult.ok
+                    ? await collectVisualEvidence({
+                        enabled: true,
+                        routes: preWriterRoutes,
+                        maxRoutes: options.maxReviewRoutes
+                    })
+                    : {
+                        enabled: false,
+                        images: [],
+                        summary: [
+                            'Pre-writer screenshots were requested, but the current-state build failed.',
+                            `Build exit code: ${preWriterBuildResult.code}`,
+                            preWriterBuildResult.stderr ? `stderr:\n${truncateText(preWriterBuildResult.stderr, 3000)}` : ''
+                        ]
+                            .filter(Boolean)
+                            .join('\n')
+                    };
+            } else {
+                preWriterVisualContext = {
+                    enabled: false,
+                    images: [],
+                    summary: `Skipped before writer: ${preWriterScreenshotPlan.summary}`
+                };
+            }
+
+            printSection('Pre-Writer Visual Context', preWriterVisualContext.summary);
+        }
+
         const writerPrompt = buildWriterPrompt({
             task,
             round,
             reviewerFeedback,
             baselineWarning,
-            buildCommand: options.buildCommand
+            buildCommand: options.buildCommand,
+            preWriterVisualContext: preWriterVisualContext.summary
         });
 
         const writerResult = await runCodexAgent({
@@ -1366,10 +1679,18 @@ async function main() {
             useOss: options.useOss,
             localProvider: options.localProvider,
             sandbox: 'workspace-write',
-            reasoningEffort: 'xhigh'
+            reasoningEffort: 'xhigh',
+            images: preWriterVisualContext.images.map((item) => item.file_path)
         });
 
         const buildResult = await runShellCommand(options.buildCommand);
+        const buildResultForPrompt = {
+            ok: buildResult.ok,
+            command: options.buildCommand,
+            exit_code: buildResult.code,
+            stdout_tail: truncateText(buildResult.stdout, 5000),
+            stderr_tail: truncateText(buildResult.stderr, 5000)
+        };
         const currentChangedFiles = await getChangedFiles();
         const actualChangedFiles = cleanArray([
             ...writerResult.changed_files,
@@ -1380,16 +1701,62 @@ async function main() {
             ? cleanArray(writerResult.review_routes).map(normalizeRoute).slice(0, options.maxReviewRoutes)
             : await inferRoutesFromFiles(actualChangedFiles, options.maxReviewRoutes);
 
-        const visualEvidence = buildResult.ok
+        let postWriterScreenshotPlan = {
+            should_capture: false,
+            routes: reviewRoutes,
+            summary: options.visualReview
+                ? 'Screenshots after the writer were skipped because the post-change build did not succeed.'
+                : 'Visual review is disabled by configuration.'
+        };
+
+        if (options.visualReview && buildResult.ok) {
+            postWriterScreenshotPlan = await runCodexAgent({
+                role: 'screenshot-planner',
+                prompt: buildScreenshotPlannerPrompt({
+                    stage: 'before-visual-reviewer',
+                    task,
+                    round,
+                    writerSummary: [
+                        writerResult.summary,
+                        `Changed files: ${actualChangedFiles.join(', ') || '[none]'}`,
+                        `Writer-declared review routes: ${reviewRoutes.join(', ') || '[none]'}`
+                    ].join('\n'),
+                    buildResult: buildResultForPrompt,
+                    suggestedRoutes: reviewRoutes,
+                    actualChangedFiles,
+                    baselineWarning
+                }),
+                schema: SCREENSHOT_PLANNER_SCHEMA,
+                model: reviewerModel,
+                useOss: options.useOss,
+                localProvider: options.localProvider,
+                sandbox: 'read-only',
+                reasoningEffort: 'high'
+            });
+        }
+
+        printSection(
+            'Pre-Visual Screenshot Plan',
+            [
+                `Capture: ${Boolean(postWriterScreenshotPlan.should_capture)}`,
+                `Routes: ${cleanArray(postWriterScreenshotPlan.routes).map(normalizeRoute).join(', ') || '[none]'}`,
+                `Summary: ${postWriterScreenshotPlan.summary}`
+            ].join('\n')
+        );
+
+        const plannedVisualRoutes = cleanArray(postWriterScreenshotPlan.routes).map(normalizeRoute).slice(0, options.maxReviewRoutes);
+        const visualEvidence = buildResult.ok && postWriterScreenshotPlan.should_capture
             ? await collectVisualEvidence({
-                enabled: options.visualReview,
-                routes: reviewRoutes,
+                enabled: true,
+                routes: plannedVisualRoutes.length > 0 ? plannedVisualRoutes : reviewRoutes,
                 maxRoutes: options.maxReviewRoutes
             })
             : {
                 enabled: false,
                 images: [],
-                summary: 'Build failed, so screenshot-based visual review was skipped.'
+                summary: buildResult.ok
+                    ? `Screenshot capture skipped after the writer: ${postWriterScreenshotPlan.summary}`
+                    : 'Build failed, so screenshot-based visual review was skipped.'
             };
 
         const writerSummary = [
@@ -1403,62 +1770,130 @@ async function main() {
         printSection('Writer Summary', writerSummary);
         printSection('Visual Evidence', visualEvidence.summary);
 
-        const reviewerPrompt = buildReviewerPrompt({
+        const codeReviewerPrompt = buildCodeReviewerPrompt({
             task,
             round,
             writerPrompt,
             writerSummary,
-            buildResult: {
-                ok: buildResult.ok,
-                command: options.buildCommand,
-                exit_code: buildResult.code,
-                stdout_tail: truncateText(buildResult.stdout, 5000),
-                stderr_tail: truncateText(buildResult.stderr, 5000)
-            },
-            visualEvidence,
+            buildResult: buildResultForPrompt,
             baselineWarning
         });
 
-        const reviewResult = await runCodexAgent({
-            role: 'reviewer',
-            prompt: reviewerPrompt,
-            schema: REVIEWER_SCHEMA,
+        const codeReviewPromise = runCodexAgent({
+            role: 'code-reviewer',
+            prompt: codeReviewerPrompt,
+            schema: CODE_REVIEWER_SCHEMA,
             model: reviewerModel,
             useOss: options.useOss,
             localProvider: options.localProvider,
             sandbox: 'read-only',
-            reasoningEffort: 'xhigh',
-            images: visualEvidence.images.map((item) => item.file_path)
+            reasoningEffort: 'xhigh'
         });
 
-        const mustFix = cleanArray(reviewResult.must_fix);
-        const niceToHave = cleanArray(reviewResult.nice_to_have);
-        const reviewSummary = [
-            `Approved: ${Boolean(reviewResult.approved)}`,
-            `Summary: ${reviewResult.summary}`,
-            `Must fix: ${mustFix.join(' | ') || '[none]'}`,
-            `Nice to have: ${niceToHave.join(' | ') || '[none]'}`,
-            `Visual summary: ${reviewResult.visual_summary}`,
-            `Visual limitations: ${reviewResult.visual_limitations}`
+        let visualReviewPromise = Promise.resolve(null);
+        if (options.visualReview) {
+            const visualReviewerPrompt = buildVisualReviewerPrompt({
+                task,
+                round,
+                writerPrompt,
+                writerSummary,
+                buildResult: buildResultForPrompt,
+                visualEvidence,
+                baselineWarning
+            });
+
+            visualReviewPromise = runCodexAgent({
+                role: 'visual-reviewer',
+                prompt: visualReviewerPrompt,
+                schema: VISUAL_REVIEWER_SCHEMA,
+                model: reviewerModel,
+                useOss: options.useOss,
+                localProvider: options.localProvider,
+                sandbox: 'read-only',
+                reasoningEffort: 'xhigh',
+                images: visualEvidence.images.map((item) => item.file_path)
+            });
+        }
+
+        printSection(
+            'Reviewer Stage',
+            options.visualReview
+                ? 'Code/content reviewer and visual reviewer started in parallel.'
+                : 'Code/content reviewer started. Visual reviewer is disabled for this run.'
+        );
+
+        const [codeReviewOutcome, visualReviewOutcome] = await Promise.allSettled([
+            codeReviewPromise,
+            visualReviewPromise
+        ]);
+
+        if (codeReviewOutcome.status !== 'fulfilled' || visualReviewOutcome.status !== 'fulfilled') {
+            const failureMessages = [];
+
+            if (codeReviewOutcome.status === 'rejected') {
+                failureMessages.push(
+                    `code/content reviewer failed: ${codeReviewOutcome.reason instanceof Error ? codeReviewOutcome.reason.message : String(codeReviewOutcome.reason)}`
+                );
+            }
+
+            if (visualReviewOutcome.status === 'rejected') {
+                failureMessages.push(
+                    `visual reviewer failed: ${visualReviewOutcome.reason instanceof Error ? visualReviewOutcome.reason.message : String(visualReviewOutcome.reason)}`
+                );
+            }
+
+            throw new Error(failureMessages.join('\n\n'));
+        }
+
+        const codeReviewResult = codeReviewOutcome.value;
+        const visualReviewResult = visualReviewOutcome.value;
+
+        const codeMustFix = cleanArray(codeReviewResult.must_fix);
+        const codeNiceToHave = cleanArray(codeReviewResult.nice_to_have);
+        const codeReviewSummary = [
+            `Approved: ${Boolean(codeReviewResult.approved)}`,
+            `Summary: ${codeReviewResult.summary}`,
+            `Must fix: ${codeMustFix.join(' | ') || '[none]'}`,
+            `Nice to have: ${codeNiceToHave.join(' | ') || '[none]'}`
         ].join('\n');
 
-        printSection('Reviewer Verdict', reviewSummary);
+        printSection('Code/Content Reviewer Verdict', codeReviewSummary);
 
-        if (reviewResult.approved) {
-            console.log('\nReviewer approved the change. Loop finished.');
+        const visualMustFix = cleanArray(visualReviewResult?.must_fix);
+        const visualNiceToHave = cleanArray(visualReviewResult?.nice_to_have);
+        const visualReviewSummary = visualReviewResult
+            ? [
+                `Approved: ${Boolean(visualReviewResult.approved)}`,
+                `Summary: ${visualReviewResult.summary}`,
+                `Must fix: ${visualMustFix.join(' | ') || '[none]'}`,
+                `Nice to have: ${visualNiceToHave.join(' | ') || '[none]'}`,
+                `Visual summary: ${visualReviewResult.visual_summary}`,
+                `Visual limitations: ${visualReviewResult.visual_limitations}`
+            ].join('\n')
+            : 'Skipped because visual review is disabled by configuration.';
+
+        printSection('Visual Reviewer Verdict', visualReviewSummary);
+
+        const combinedApproved = Boolean(codeReviewResult.approved) && (!visualReviewResult || Boolean(visualReviewResult.approved));
+        if (combinedApproved) {
+            console.log('\nAll enabled reviewers approved the change. Loop finished.');
             return;
         }
 
         reviewerFeedback = [
-            reviewResult.summary,
-            mustFix.length ? `Blocking issues:\n- ${mustFix.join('\n- ')}` : 'No explicit blocking issues were listed.',
-            niceToHave.length ? `Optional suggestions:\n- ${niceToHave.join('\n- ')}` : ''
+            `Code/content reviewer summary:\n${codeReviewResult.summary}`,
+            codeMustFix.length ? `Code/content reviewer blocking issues:\n- ${codeMustFix.join('\n- ')}` : 'Code/content reviewer listed no blocking issues.',
+            codeNiceToHave.length ? `Code/content reviewer optional suggestions:\n- ${codeNiceToHave.join('\n- ')}` : '',
+            visualReviewResult ? `Visual reviewer summary:\n${visualReviewResult.summary}` : '',
+            visualMustFix.length ? `Visual reviewer blocking issues:\n- ${visualMustFix.join('\n- ')}` : '',
+            visualNiceToHave.length ? `Visual reviewer optional suggestions:\n- ${visualNiceToHave.join('\n- ')}` : '',
+            visualReviewResult?.visual_limitations ? `Visual reviewer limitations:\n${visualReviewResult.visual_limitations}` : ''
         ]
             .filter(Boolean)
             .join('\n\n');
     }
 
-    console.error('\nReached the max round limit without reviewer approval.');
+    console.error('\nReached the max round limit without all enabled reviewers approving the change.');
     process.exit(2);
 }
 

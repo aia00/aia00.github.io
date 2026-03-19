@@ -28,7 +28,7 @@ const hasLeftSidebar = hasTocSlot || showToc;
     </head>
     <body class="bg-main text-main">
         <SiteAnalytics />
-        <div class="flex flex-col min-h-screen px-4 md:px-8">
+        <div class="site-shell flex flex-col min-h-screen px-4 md:px-8">
             <Nav />
             {showHeader && <Header />}
             <div class:list={['grow w-full max-w-7xl mx-auto xl:flex xl:items-start', hasRail ? 'xl:gap-8' : 'xl:gap-12']}>
