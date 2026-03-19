@@ -1,0 +1,36 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="28" fill="#F6F1E8"/>
+  <rect x="40" y="40" width="1120" height="620" rx="24" fill="#FFFDFC" stroke="#D8CBB9" stroke-width="2"/>
+  <text x="80" y="110" fill="#3B2F2A" font-family="Georgia, serif" font-size="34" font-weight="700">tmux Workflow</text>
+  <text x="80" y="145" fill="#6F6258" font-family="Arial, sans-serif" font-size="20">Local terminal attaches to a persistent workspace on the remote machine.</text>
+
+  <rect x="80" y="200" width="250" height="360" rx="20" fill="#FFF8E7" stroke="#C9A96B" stroke-width="2"/>
+  <text x="110" y="250" fill="#5C4522" font-family="Arial, sans-serif" font-size="24" font-weight="700">Client</text>
+  <text x="110" y="290" fill="#5C4522" font-family="Arial, sans-serif" font-size="20">Laptop terminal</text>
+  <text x="110" y="325" fill="#5C4522" font-family="Arial, sans-serif" font-size="20">SSH session</text>
+  <text x="110" y="360" fill="#5C4522" font-family="Arial, sans-serif" font-size="20">Detach / Reattach</text>
+
+  <path d="M350 380H430" stroke="#8A7046" stroke-width="4" stroke-linecap="round"/>
+  <path d="M418 368L430 380L418 392" stroke="#8A7046" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="450" y="160" width="650" height="420" rx="22" fill="#F4FBF8" stroke="#7BA88F" stroke-width="2"/>
+  <text x="490" y="215" fill="#244E3D" font-family="Arial, sans-serif" font-size="26" font-weight="700">tmux Server</text>
+  <text x="490" y="250" fill="#244E3D" font-family="Arial, sans-serif" font-size="18">Session: paper</text>
+
+  <rect x="490" y="280" width="270" height="250" rx="18" fill="#FFFFFF" stroke="#9AC3AE" stroke-width="2"/>
+  <text x="520" y="320" fill="#244E3D" font-family="Arial, sans-serif" font-size="22" font-weight="700">Window 1</text>
+  <text x="520" y="350" fill="#244E3D" font-family="Arial, sans-serif" font-size="18">editor</text>
+  <rect x="520" y="380" width="210" height="110" rx="12" fill="#E8F6EF" stroke="#9AC3AE" stroke-width="2"/>
+  <text x="545" y="445" fill="#244E3D" font-family="Arial, sans-serif" font-size="20">Pane A</text>
+  <text x="545" y="472" fill="#244E3D" font-family="Arial, sans-serif" font-size="16">vim / shell</text>
+
+  <rect x="790" y="280" width="270" height="250" rx="18" fill="#FFFFFF" stroke="#9AC3AE" stroke-width="2"/>
+  <text x="820" y="320" fill="#244E3D" font-family="Arial, sans-serif" font-size="22" font-weight="700">Window 2</text>
+  <text x="820" y="350" fill="#244E3D" font-family="Arial, sans-serif" font-size="18">train + logs</text>
+  <rect x="820" y="380" width="210" height="48" rx="10" fill="#E8F6EF" stroke="#9AC3AE" stroke-width="2"/>
+  <rect x="820" y="442" width="210" height="48" rx="10" fill="#E8F6EF" stroke="#9AC3AE" stroke-width="2"/>
+  <text x="845" y="411" fill="#244E3D" font-family="Arial, sans-serif" font-size="18">Pane A: run</text>
+  <text x="845" y="473" fill="#244E3D" font-family="Arial, sans-serif" font-size="18">Pane B: tail -f</text>
+
+  <text x="490" y="620" fill="#6C7D74" font-family="Arial, sans-serif" font-size="18">Organize by project -&gt; task -&gt; temporary parallel view</text>
+</svg>
