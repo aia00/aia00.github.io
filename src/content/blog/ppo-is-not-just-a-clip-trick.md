@@ -11,6 +11,9 @@ tags:
 seo:
   title: "PPO Is Not Just a Clip Trick"
   description: "A technical note on why PPO works in practice because of implementation details as much as, and sometimes more than, the clipping objective."
+  image:
+    src: '/blog/ppo-implementation-stack.svg'
+    alt: 'A layered diagram showing the clipped PPO objective plus advantage estimation, normalization, and optimization defaults'
 ---
 
 A lot of people in RL have had the same reaction at some point: *PPO? Really? Is the big idea basically just clipping a ratio?* I think that reaction is directionally right, but too crude.

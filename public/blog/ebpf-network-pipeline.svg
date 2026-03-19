@@ -1,72 +1,95 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1420" height="700" viewBox="0 0 1420 700" role="img" aria-labelledby="title desc">
-  <title id="title">Linux networking pipeline with eBPF hooks</title>
-  <desc id="desc">A clearer diagram showing the application, socket/TCP stack, qdisc, NIC queues, physical network, and eBPF hook points.</desc>
-  <rect width="1420" height="700" fill="#f6f3ea"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="860" viewBox="0 0 1080 860" role="img" aria-labelledby="title desc">
+  <title id="title">Linux packet path, queue layers, and eBPF hooks</title>
+  <desc id="desc">A simplified map of the Linux networking stack showing the application, Socket and TCP, qdisc and TC, NIC queues, physical network, receive path, eBPF hook points, observability, and congestion signals.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f4eee6"/>
+      <stop offset="100%" stop-color="#eef3f6"/>
+    </linearGradient>
+    <style>
+      .title { font: 700 36px Georgia, serif; fill: #1f2a33; }
+      .subtitle { font: 500 20px Arial, sans-serif; fill: #4a5b66; }
+      .section { font: 700 20px Arial, sans-serif; fill: #51616c; letter-spacing: 0.14em; text-transform: uppercase; }
+      .head { font: 700 28px Georgia, serif; fill: #ffffff; }
+      .body { font: 500 19px Arial, sans-serif; fill: #ecf4fa; }
+      .body-dark { font: 500 19px Arial, sans-serif; fill: #33424c; }
+      .small-dark { font: 500 17px Arial, sans-serif; fill: #44545e; }
+      .pill { font: 500 18px Arial, sans-serif; }
+      .card { rx: 20; ry: 20; stroke: #21313d; stroke-opacity: 0.18; stroke-width: 2; }
+      .arrow { stroke: #253540; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#253540" />
+    </marker>
+  </defs>
 
-  <rect x="48" y="72" width="250" height="102" rx="16" fill="#1f2a44"/>
-  <text x="173" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Application</text>
-  <text x="173" y="154" font-family="Arial, sans-serif" font-size="18" fill="#d9e3ff" text-anchor="middle">send(), recv(), io_uring</text>
+  <rect width="1080" height="860" fill="url(#bg)" />
 
-  <rect x="350" y="72" width="290" height="102" rx="16" fill="#28536b"/>
-  <text x="495" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Socket / TCP</text>
-  <text x="495" y="154" font-family="Arial, sans-serif" font-size="18" fill="#d8f0fb" text-anchor="middle">cwnd, pacing, RTT estimation</text>
+  <text x="70" y="74" class="title">Where packets queue, and where eBPF can observe them</text>
+  <text x="70" y="112" class="subtitle">Transport sets sending pressure, queueing layers stage packets,</text>
+  <text x="70" y="138" class="subtitle">and hooks expose the signals that tell you where congestion really lives.</text>
 
-  <rect x="692" y="72" width="250" height="102" rx="16" fill="#5c7457"/>
-  <text x="817" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">qdisc / TC</text>
-  <text x="817" y="154" font-family="Arial, sans-serif" font-size="18" fill="#e6f1e1" text-anchor="middle">fq, fq_codel, shaping</text>
+  <text x="70" y="160" class="section">Packet path</text>
 
-  <rect x="994" y="72" width="330" height="102" rx="16" fill="#8c5e34"/>
-  <text x="1159" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">NIC TX / RX Rings</text>
-  <text x="1159" y="154" font-family="Arial, sans-serif" font-size="18" fill="#ffead8" text-anchor="middle">DMA descriptors, BQL, NAPI</text>
+  <rect x="60" y="190" width="210" height="122" class="card" fill="#24304a" />
+  <text x="165" y="242" class="head" text-anchor="middle">Application</text>
+  <text x="165" y="274" class="body" text-anchor="middle">send, recv, io_uring</text>
 
-  <line x1="298" y1="122" x2="350" y2="122" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="350,122 334,114 334,130" fill="#1f1f1f"/>
-  <line x1="640" y1="122" x2="692" y2="122" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="692,122 676,114 676,130" fill="#1f1f1f"/>
-  <line x1="942" y1="122" x2="994" y2="122" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="994,122 978,114 978,130" fill="#1f1f1f"/>
+  <rect x="300" y="190" width="210" height="122" class="card" fill="#2f6079" />
+  <text x="405" y="242" class="head" text-anchor="middle">Socket / TCP</text>
+  <text x="405" y="274" class="body" text-anchor="middle">cwnd, pacing, RTT</text>
 
-  <rect x="470" y="248" width="480" height="108" rx="14" fill="#d8c9b8" stroke="#5b4636" stroke-width="2"/>
-  <text x="710" y="294" font-family="Georgia, serif" font-size="28" fill="#3e2f24" text-anchor="middle">Physical Network</text>
-  <text x="710" y="324" font-family="Arial, sans-serif" font-size="18" fill="#4e4036" text-anchor="middle">switch queues, ECN marks, loss,</text>
-  <text x="710" y="348" font-family="Arial, sans-serif" font-size="18" fill="#4e4036" text-anchor="middle">and RTT inflation</text>
+  <rect x="540" y="190" width="210" height="122" class="card" fill="#617856" />
+  <text x="645" y="242" class="head" text-anchor="middle">qdisc / TC</text>
+  <text x="645" y="274" class="body" text-anchor="middle">fq, fq_codel, shaping</text>
 
-  <line x1="1159" y1="174" x2="1159" y2="232" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="1159,232 1151,216 1167,216" fill="#1f1f1f"/>
-  <line x1="180" y1="430" x2="180" y2="492" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="180,430 172,446 188,446" fill="#1f1f1f"/>
+  <rect x="780" y="190" width="240" height="122" class="card" fill="#956232" />
+  <text x="900" y="242" class="head" text-anchor="middle">NIC Queues</text>
+  <text x="900" y="270" class="body" text-anchor="middle">TX and RX rings,</text>
+  <text x="900" y="294" class="body" text-anchor="middle">BQL and NAPI</text>
 
-  <rect x="48" y="492" width="280" height="110" rx="14" fill="#3d405b"/>
-  <text x="188" y="542" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Receive Path</text>
-  <text x="188" y="574" font-family="Arial, sans-serif" font-size="18" fill="#dfe3ff" text-anchor="middle">driver → XDP → TC ingress</text>
+  <path d="M270 251 H298" class="arrow" />
+  <path d="M510 251 H538" class="arrow" />
+  <path d="M750 251 H778" class="arrow" />
 
-  <rect x="380" y="492" width="300" height="110" rx="14" fill="#497174"/>
-  <text x="530" y="542" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">eBPF Hooks</text>
-  <text x="530" y="572" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">XDP, tc, sock_ops,</text>
-  <text x="530" y="596" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">cgroup, sk_msg</text>
+  <rect x="318" y="334" width="174" height="42" rx="14" fill="#d6ecf7" stroke="#2f6079" stroke-width="2" />
+  <text x="405" y="362" class="pill" fill="#24495d" text-anchor="middle">sock_ops / sk_msg</text>
 
-  <rect x="732" y="492" width="280" height="110" rx="14" fill="#7a3b69"/>
-  <text x="872" y="542" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">Observability</text>
-  <text x="872" y="572" font-family="Arial, sans-serif" font-size="18" fill="#ffdff6" text-anchor="middle">tracepoints, kprobes,</text>
-  <text x="872" y="596" font-family="Arial, sans-serif" font-size="18" fill="#ffdff6" text-anchor="middle">perf/ringbuf</text>
+  <rect x="561" y="334" width="168" height="42" rx="14" fill="#e5efe0" stroke="#617856" stroke-width="2" />
+  <text x="645" y="362" class="pill" fill="#43553d" text-anchor="middle">tc ingress / egress</text>
 
-  <rect x="1064" y="492" width="290" height="110" rx="14" fill="#6f1d1b"/>
-  <text x="1209" y="542" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Control Signals</text>
-  <text x="1209" y="574" font-family="Arial, sans-serif" font-size="18" fill="#ffdeda" text-anchor="middle">drop, ECN, backlog, pacing</text>
+  <rect x="824" y="334" width="152" height="42" rx="14" fill="#faead9" stroke="#956232" stroke-width="2" />
+  <text x="900" y="362" class="pill" fill="#70431a" text-anchor="middle">driver + XDP</text>
 
-  <line x1="328" y1="548" x2="380" y2="548" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="380,548 364,540 364,556" fill="#1f1f1f"/>
-  <line x1="680" y1="548" x2="732" y2="548" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="732,548 716,540 716,556" fill="#1f1f1f"/>
-  <line x1="1012" y1="548" x2="1064" y2="548" stroke="#1f1f1f" stroke-width="4"/>
-  <polygon points="1064,548 1048,540 1048,556" fill="#1f1f1f"/>
+  <rect x="300" y="410" width="480" height="108" class="card" fill="#ddd0bf" />
+  <text x="540" y="455" font-family="Georgia, serif" font-size="30" fill="#433228" text-anchor="middle">Physical Network</text>
+  <text x="540" y="486" class="body-dark" text-anchor="middle">switch queues, ECN marks, drops, and RTT inflation</text>
 
-  <rect x="380" y="194" width="220" height="40" rx="12" fill="#d8f0fb" stroke="#28536b" stroke-width="2"/>
-  <text x="490" y="222" font-family="Arial, sans-serif" font-size="18" fill="#173646" text-anchor="middle">sock_ops / sk_msg</text>
+  <path d="M900 312 V392" class="arrow" />
 
-  <rect x="726" y="194" width="190" height="40" rx="12" fill="#e6f1e1" stroke="#5c7457" stroke-width="2"/>
-  <text x="821" y="222" font-family="Arial, sans-serif" font-size="18" fill="#31442c" text-anchor="middle">tc egress / ingress</text>
+  <text x="70" y="586" class="section">Hook points and feedback</text>
 
-  <rect x="1072" y="194" width="190" height="40" rx="12" fill="#ffead8" stroke="#8c5e34" stroke-width="2"/>
-  <text x="1167" y="222" font-family="Arial, sans-serif" font-size="18" fill="#5b3413" text-anchor="middle">driver + XDP entry</text>
+  <rect x="60" y="616" width="225" height="132" class="card" fill="#434767" />
+  <text x="172.5" y="670" class="head" text-anchor="middle">Receive Path</text>
+  <text x="172.5" y="703" class="body" text-anchor="middle">driver, XDP, TC ingress</text>
+
+  <rect x="315" y="616" width="225" height="132" class="card" fill="#587f82" />
+  <text x="427.5" y="670" class="head" text-anchor="middle">eBPF Hooks</text>
+  <text x="427.5" y="703" class="body" text-anchor="middle">XDP, tc, sock_ops</text>
+
+  <rect x="570" y="616" width="225" height="132" class="card" fill="#83457a" />
+  <text x="682.5" y="670" class="head" text-anchor="middle">Observability</text>
+  <text x="682.5" y="703" class="body" text-anchor="middle">tracepoints, kprobes</text>
+
+  <rect x="825" y="616" width="225" height="132" class="card" fill="#7d251e" />
+  <text x="937.5" y="670" class="head" text-anchor="middle">Control Signals</text>
+  <text x="937.5" y="703" class="body" text-anchor="middle">loss, ECN, backlog</text>
+
+  <path d="M285 682 H313" class="arrow" />
+  <path d="M540 682 H568" class="arrow" />
+  <path d="M795 682 H823" class="arrow" />
+
+  <path d="M172 520 V616" stroke="#253540" stroke-width="4" fill="none" marker-end="url(#arrow)" />
+  <text x="70" y="800" class="small-dark">Read the queue first, then choose the hook.</text>
+  <text x="70" y="824" class="small-dark">qdisc pressure and NIC pressure are different problems.</text>
 </svg>
