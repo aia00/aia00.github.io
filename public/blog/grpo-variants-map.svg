@@ -7,9 +7,9 @@
       <stop offset="100%" stop-color="#e7eef6"/>
     </linearGradient>
     <style>
-      .title { font: 700 40px Georgia, serif; fill: #1f2b33; }
-      .head { font: 700 26px Georgia, serif; fill: #243642; }
-      .body { font: 500 21px Georgia, serif; fill: #344955; }
+      .title { font: 700 36px Georgia, serif; fill: #1f2b33; }
+      .head { font: 700 24px Georgia, serif; fill: #243642; }
+      .body { font: 500 18px Georgia, serif; fill: #344955; }
       .box { rx: 22; ry: 22; stroke: #29404d; stroke-width: 3; }
       .arrow { stroke: #29404d; stroke-width: 4; fill: none; marker-end: url(#m); }
     </style>
@@ -19,7 +19,7 @@
   </defs>
 
   <rect width="1320" height="820" fill="url(#bg)"/>
-  <text x="72" y="78" class="title">Most GRPO variants edit three design choices</text>
+  <text x="72" y="74" class="title">Most GRPO variants edit three design choices</text>
 
   <rect x="100" y="135" width="190" height="108" class="box" fill="#f6e5d7"/>
   <text x="195" y="204" class="head" text-anchor="middle">PPO</text>
@@ -39,31 +39,31 @@
   <text x="1160" y="232" class="body" text-anchor="middle">LOO baseline</text>
 
   <rect x="200" y="360" width="220" height="132" class="box" fill="#efe1f4"/>
-  <text x="310" y="430" class="head" text-anchor="middle">Dr.GRPO</text>
-  <text x="310" y="456" class="body" text-anchor="middle">remove length bias</text>
-  <text x="310" y="488" class="body" text-anchor="middle">and reward scaling</text>
+  <text x="310" y="426" class="head" text-anchor="middle">Dr.GRPO</text>
+  <text x="310" y="452" class="body" text-anchor="middle">remove length bias</text>
+  <text x="310" y="478" class="body" text-anchor="middle">and reward scaling</text>
 
   <rect x="500" y="344" width="280" height="160" class="box" fill="#dceaf6"/>
-  <text x="640" y="416" class="head" text-anchor="middle">DAPO</text>
-  <text x="640" y="444" class="body" text-anchor="middle">token-level loss</text>
-  <text x="640" y="476" class="body" text-anchor="middle">dynamic sampling</text>
-  <text x="640" y="508" class="body" text-anchor="middle">long-CoT training</text>
+  <text x="640" y="412" class="head" text-anchor="middle">DAPO</text>
+  <text x="640" y="442" class="body" text-anchor="middle">token-level loss</text>
+  <text x="640" y="470" class="body" text-anchor="middle">dynamic sampling</text>
+  <text x="640" y="498" class="body" text-anchor="middle">long-CoT training</text>
 
   <rect x="860" y="360" width="220" height="132" class="box" fill="#f3ead6"/>
-  <text x="970" y="430" class="head" text-anchor="middle">BNPO</text>
-  <text x="970" y="456" class="body" text-anchor="middle">adaptive reward</text>
-  <text x="970" y="488" class="body" text-anchor="middle">normalization</text>
+  <text x="970" y="426" class="head" text-anchor="middle">BNPO</text>
+  <text x="970" y="452" class="body" text-anchor="middle">adaptive reward</text>
+  <text x="970" y="478" class="body" text-anchor="middle">normalization</text>
 
   <rect x="150" y="590" width="430" height="160" class="box" fill="#fffdf8"/>
-  <text x="365" y="654" class="head" text-anchor="middle">Axis 1: normalization</text>
-  <text x="365" y="694" class="body" text-anchor="middle">group std, global batch norm,</text>
-  <text x="365" y="726" class="body" text-anchor="middle">or adaptive reward scaling</text>
+  <text x="365" y="648" class="head" text-anchor="middle">Axis 1: normalization</text>
+  <text x="365" y="688" class="body" text-anchor="middle">group std, global batch norm,</text>
+  <text x="365" y="716" class="body" text-anchor="middle">or adaptive reward scaling</text>
 
   <rect x="660" y="590" width="500" height="160" class="box" fill="#eef5fa"/>
-  <text x="910" y="646" class="head" text-anchor="middle">Axis 2 and 3</text>
-  <text x="910" y="678" class="head" text-anchor="middle">loss and trust region</text>
-  <text x="910" y="714" class="body" text-anchor="middle">per-sequence or per-token loss,</text>
-  <text x="910" y="746" class="body" text-anchor="middle">plus clipping and sampling rules</text>
+  <text x="910" y="642" class="head" text-anchor="middle">Axis 2 and 3</text>
+  <text x="910" y="672" class="head" text-anchor="middle">loss and trust region</text>
+  <text x="910" y="706" class="body" text-anchor="middle">per-sequence or per-token loss,</text>
+  <text x="910" y="734" class="body" text-anchor="middle">plus clipping and sampling rules</text>
 
   <path d="M290 190 L380 190" class="arrow"/>
   <path d="M660 190 L780 190" class="arrow"/>

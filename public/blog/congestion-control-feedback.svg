@@ -4,29 +4,29 @@
   <rect width="1200" height="520" fill="#f6f3ea"/>
 
   <rect x="70" y="140" width="240" height="120" rx="18" fill="#7a4f2a"/>
-  <text x="190" y="196" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Queues Build Up</text>
+  <text x="190" y="196" font-family="Georgia, serif" font-size="24" fill="#ffffff" text-anchor="middle">Queues Build Up</text>
   <text x="190" y="226" font-family="Arial, sans-serif" font-size="20" fill="#ffe8d5" text-anchor="middle">qdisc backlog</text>
   <text x="190" y="254" font-family="Arial, sans-serif" font-size="20" fill="#ffe8d5" text-anchor="middle">NIC ring pressure</text>
 
   <rect x="360" y="92" width="230" height="84" rx="14" fill="#31525b"/>
   <text x="475" y="132" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">Loss</text>
-  <text x="475" y="158" font-family="Arial, sans-serif" font-size="19" fill="#d8fbff" text-anchor="middle">tail drop, RTO, dup ACKs</text>
+  <text x="475" y="158" font-family="Arial, sans-serif" font-size="17" fill="#d8fbff" text-anchor="middle">tail drop, RTO, dup ACKs</text>
 
   <rect x="360" y="214" width="230" height="84" rx="14" fill="#4e6e58"/>
   <text x="475" y="254" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">ECN Marks</text>
-  <text x="475" y="280" font-family="Arial, sans-serif" font-size="19" fill="#e1f7df" text-anchor="middle">switch or queue marking</text>
+  <text x="475" y="280" font-family="Arial, sans-serif" font-size="18" fill="#e1f7df" text-anchor="middle">switch or queue marking</text>
 
   <rect x="360" y="336" width="230" height="84" rx="14" fill="#5b4a7a"/>
   <text x="475" y="376" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">RTT Inflation</text>
-  <text x="475" y="402" font-family="Arial, sans-serif" font-size="19" fill="#efe5ff" text-anchor="middle">queueing delay, min RTT gap</text>
+  <text x="475" y="402" font-family="Arial, sans-serif" font-size="17" fill="#efe5ff" text-anchor="middle">queueing delay, min RTT gap</text>
 
   <rect x="660" y="92" width="220" height="84" rx="14" fill="#293241"/>
   <text x="770" y="132" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">CUBIC</text>
   <text x="770" y="158" font-family="Arial, sans-serif" font-size="19" fill="#dfe9ff" text-anchor="middle">loss-driven TCP growth</text>
 
   <rect x="660" y="214" width="220" height="84" rx="14" fill="#1d5c63"/>
-  <text x="770" y="254" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">DCTCP / DCQCN</text>
-  <text x="770" y="280" font-family="Arial, sans-serif" font-size="19" fill="#d7fbff" text-anchor="middle">ECN-sensitive reduction</text>
+  <text x="770" y="254" font-family="Georgia, serif" font-size="24" fill="#ffffff" text-anchor="middle">DCTCP / DCQCN</text>
+  <text x="770" y="280" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">ECN-sensitive reduction</text>
 
   <rect x="660" y="336" width="220" height="84" rx="14" fill="#455d7a"/>
   <text x="770" y="376" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">BBR</text>

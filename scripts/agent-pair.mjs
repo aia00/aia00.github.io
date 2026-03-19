@@ -642,14 +642,14 @@ function handleCodexStreamLine({ line, reportProgress }) {
     }
 }
 
-async function runStreamingCommand(command, args, { cwd, role, timeout = DEFAULT_TIMEOUT_MS }) {
+async function runStreamingCommand(command, args, { cwd, role, timeout = DEFAULT_TIMEOUT_MS, input = '' }) {
     return new Promise((resolve) => {
         const reportProgress = createProgressReporter(role);
         reportProgress('Launching Codex CLI.');
 
         const child = spawn(command, args, {
             cwd,
-            stdio: ['ignore', 'pipe', 'pipe']
+            stdio: ['pipe', 'pipe', 'pipe']
         });
 
         let stdout = '';
@@ -687,6 +687,10 @@ async function runStreamingCommand(command, args, { cwd, role, timeout = DEFAULT
 
         attachReader(child.stdout, 'stdout');
         attachReader(child.stderr, 'stderr');
+
+        if (child.stdin) {
+            child.stdin.end(input);
+        }
 
         const killTimer = setTimeout(() => {
             timedOut = true;
@@ -856,9 +860,10 @@ async function runCodexAgent({
         args.push('--image', imagePath);
     }
 
-    args.push(prompt);
+    const promptInput = prompt.endsWith('\n') ? prompt : `${prompt}\n`;
+    args.push('-');
 
-    const result = await runStreamingCommand(codexBin, args, { cwd: repoRoot, role });
+    const result = await runStreamingCommand(codexBin, args, { cwd: repoRoot, role, input: promptInput });
     if (!result.ok) {
         throw new Error(
             `${role} codex exec failed.\nstdout:\n${truncateText(result.stdout, 4000)}\n\nstderr:\n${truncateText(result.stderr, 4000)}`

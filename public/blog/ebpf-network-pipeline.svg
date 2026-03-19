@@ -4,20 +4,20 @@
   <rect width="1420" height="700" fill="#f6f3ea"/>
 
   <rect x="48" y="72" width="250" height="102" rx="16" fill="#1f2a44"/>
-  <text x="173" y="124" font-family="Georgia, serif" font-size="34" fill="#ffffff" text-anchor="middle">Application</text>
-  <text x="173" y="156" font-family="Arial, sans-serif" font-size="22" fill="#d9e3ff" text-anchor="middle">send(), recv(), io_uring</text>
+  <text x="173" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Application</text>
+  <text x="173" y="154" font-family="Arial, sans-serif" font-size="18" fill="#d9e3ff" text-anchor="middle">send(), recv(), io_uring</text>
 
   <rect x="350" y="72" width="290" height="102" rx="16" fill="#28536b"/>
-  <text x="495" y="124" font-family="Georgia, serif" font-size="34" fill="#ffffff" text-anchor="middle">Socket / TCP</text>
-  <text x="495" y="156" font-family="Arial, sans-serif" font-size="22" fill="#d8f0fb" text-anchor="middle">cwnd, pacing, RTT estimation</text>
+  <text x="495" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Socket / TCP</text>
+  <text x="495" y="154" font-family="Arial, sans-serif" font-size="18" fill="#d8f0fb" text-anchor="middle">cwnd, pacing, RTT estimation</text>
 
   <rect x="692" y="72" width="250" height="102" rx="16" fill="#5c7457"/>
-  <text x="817" y="124" font-family="Georgia, serif" font-size="34" fill="#ffffff" text-anchor="middle">qdisc / TC</text>
-  <text x="817" y="156" font-family="Arial, sans-serif" font-size="22" fill="#e6f1e1" text-anchor="middle">fq, fq_codel, shaping</text>
+  <text x="817" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">qdisc / TC</text>
+  <text x="817" y="154" font-family="Arial, sans-serif" font-size="18" fill="#e6f1e1" text-anchor="middle">fq, fq_codel, shaping</text>
 
   <rect x="994" y="72" width="330" height="102" rx="16" fill="#8c5e34"/>
-  <text x="1159" y="124" font-family="Georgia, serif" font-size="34" fill="#ffffff" text-anchor="middle">NIC TX / RX Rings</text>
-  <text x="1159" y="156" font-family="Arial, sans-serif" font-size="21" fill="#ffead8" text-anchor="middle">DMA descriptors, BQL, NAPI</text>
+  <text x="1159" y="122" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">NIC TX / RX Rings</text>
+  <text x="1159" y="154" font-family="Arial, sans-serif" font-size="18" fill="#ffead8" text-anchor="middle">DMA descriptors, BQL, NAPI</text>
 
   <line x1="298" y1="122" x2="350" y2="122" stroke="#1f1f1f" stroke-width="4"/>
   <polygon points="350,122 334,114 334,130" fill="#1f1f1f"/>
@@ -27,8 +27,9 @@
   <polygon points="994,122 978,114 978,130" fill="#1f1f1f"/>
 
   <rect x="470" y="248" width="480" height="108" rx="14" fill="#d8c9b8" stroke="#5b4636" stroke-width="2"/>
-  <text x="710" y="298" font-family="Georgia, serif" font-size="32" fill="#3e2f24" text-anchor="middle">Physical Network</text>
-  <text x="710" y="332" font-family="Arial, sans-serif" font-size="22" fill="#4e4036" text-anchor="middle">switch queues, ECN marks, loss, and RTT inflation</text>
+  <text x="710" y="294" font-family="Georgia, serif" font-size="28" fill="#3e2f24" text-anchor="middle">Physical Network</text>
+  <text x="710" y="324" font-family="Arial, sans-serif" font-size="18" fill="#4e4036" text-anchor="middle">switch queues, ECN marks, loss,</text>
+  <text x="710" y="348" font-family="Arial, sans-serif" font-size="18" fill="#4e4036" text-anchor="middle">and RTT inflation</text>
 
   <line x1="1159" y1="174" x2="1159" y2="232" stroke="#1f1f1f" stroke-width="4"/>
   <polygon points="1159,232 1151,216 1167,216" fill="#1f1f1f"/>
@@ -36,22 +37,22 @@
   <polygon points="180,430 172,446 188,446" fill="#1f1f1f"/>
 
   <rect x="48" y="492" width="280" height="110" rx="14" fill="#3d405b"/>
-  <text x="188" y="544" font-family="Georgia, serif" font-size="32" fill="#ffffff" text-anchor="middle">Receive Path</text>
-  <text x="188" y="578" font-family="Arial, sans-serif" font-size="21" fill="#dfe3ff" text-anchor="middle">driver → XDP → TC ingress</text>
+  <text x="188" y="542" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Receive Path</text>
+  <text x="188" y="574" font-family="Arial, sans-serif" font-size="18" fill="#dfe3ff" text-anchor="middle">driver → XDP → TC ingress</text>
 
   <rect x="380" y="492" width="300" height="110" rx="14" fill="#497174"/>
-  <text x="530" y="544" font-family="Georgia, serif" font-size="32" fill="#ffffff" text-anchor="middle">eBPF Hooks</text>
-  <text x="530" y="574" font-family="Arial, sans-serif" font-size="21" fill="#d7fbff" text-anchor="middle">XDP, tc, sock_ops,</text>
-  <text x="530" y="600" font-family="Arial, sans-serif" font-size="21" fill="#d7fbff" text-anchor="middle">cgroup, sk_msg</text>
+  <text x="530" y="542" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">eBPF Hooks</text>
+  <text x="530" y="572" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">XDP, tc, sock_ops,</text>
+  <text x="530" y="596" font-family="Arial, sans-serif" font-size="18" fill="#d7fbff" text-anchor="middle">cgroup, sk_msg</text>
 
   <rect x="732" y="492" width="280" height="110" rx="14" fill="#7a3b69"/>
-  <text x="872" y="544" font-family="Georgia, serif" font-size="32" fill="#ffffff" text-anchor="middle">Observability</text>
-  <text x="872" y="574" font-family="Arial, sans-serif" font-size="21" fill="#ffdff6" text-anchor="middle">tracepoints, kprobes,</text>
-  <text x="872" y="600" font-family="Arial, sans-serif" font-size="21" fill="#ffdff6" text-anchor="middle">perf/ringbuf</text>
+  <text x="872" y="542" font-family="Georgia, serif" font-size="28" fill="#ffffff" text-anchor="middle">Observability</text>
+  <text x="872" y="572" font-family="Arial, sans-serif" font-size="18" fill="#ffdff6" text-anchor="middle">tracepoints, kprobes,</text>
+  <text x="872" y="596" font-family="Arial, sans-serif" font-size="18" fill="#ffdff6" text-anchor="middle">perf/ringbuf</text>
 
   <rect x="1064" y="492" width="290" height="110" rx="14" fill="#6f1d1b"/>
-  <text x="1209" y="544" font-family="Georgia, serif" font-size="32" fill="#ffffff" text-anchor="middle">Control Signals</text>
-  <text x="1209" y="578" font-family="Arial, sans-serif" font-size="21" fill="#ffdeda" text-anchor="middle">drop, ECN, backlog, pacing</text>
+  <text x="1209" y="542" font-family="Georgia, serif" font-size="30" fill="#ffffff" text-anchor="middle">Control Signals</text>
+  <text x="1209" y="574" font-family="Arial, sans-serif" font-size="18" fill="#ffdeda" text-anchor="middle">drop, ECN, backlog, pacing</text>
 
   <line x1="328" y1="548" x2="380" y2="548" stroke="#1f1f1f" stroke-width="4"/>
   <polygon points="380,548 364,540 364,556" fill="#1f1f1f"/>
@@ -61,11 +62,11 @@
   <polygon points="1064,548 1048,540 1048,556" fill="#1f1f1f"/>
 
   <rect x="380" y="194" width="220" height="40" rx="12" fill="#d8f0fb" stroke="#28536b" stroke-width="2"/>
-  <text x="490" y="223" font-family="Arial, sans-serif" font-size="20" fill="#173646" text-anchor="middle">sock_ops / sk_msg</text>
+  <text x="490" y="222" font-family="Arial, sans-serif" font-size="18" fill="#173646" text-anchor="middle">sock_ops / sk_msg</text>
 
   <rect x="726" y="194" width="190" height="40" rx="12" fill="#e6f1e1" stroke="#5c7457" stroke-width="2"/>
-  <text x="821" y="223" font-family="Arial, sans-serif" font-size="20" fill="#31442c" text-anchor="middle">tc egress / ingress</text>
+  <text x="821" y="222" font-family="Arial, sans-serif" font-size="18" fill="#31442c" text-anchor="middle">tc egress / ingress</text>
 
   <rect x="1072" y="194" width="190" height="40" rx="12" fill="#ffead8" stroke="#8c5e34" stroke-width="2"/>
-  <text x="1167" y="223" font-family="Arial, sans-serif" font-size="20" fill="#5b3413" text-anchor="middle">driver + XDP entry</text>
+  <text x="1167" y="222" font-family="Arial, sans-serif" font-size="18" fill="#5b3413" text-anchor="middle">driver + XDP entry</text>
 </svg>

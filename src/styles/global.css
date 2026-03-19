@@ -1,4 +1,4 @@
-@import "katex/dist/katex.min.css";
+@import 'katex/dist/katex.min.css';
 
 @tailwind base;
 @tailwind components;
@@ -61,4 +61,46 @@
         --color-border-main: 243 239 230;
     }
     */
+}
+
+@layer components {
+    .prose-blog-figures :where(img) {
+        display: block;
+        width: 100%;
+        margin-inline: auto;
+        border: 1px solid rgb(var(--color-border-main) / 0.14);
+        border-radius: 1.5rem;
+        background: linear-gradient(180deg, rgb(var(--color-bg-muted) / 0.9), rgb(var(--color-bg-main) / 0.98));
+        padding: 0.75rem;
+        box-shadow: 0 16px 32px -26px rgb(var(--color-text-main) / 0.45);
+    }
+
+    .prose-blog-figures :where(p > img:only-child) {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .prose-blog-figures :where(figure) {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        border: 1px solid rgb(var(--color-border-main) / 0.14);
+        border-radius: 1.5rem;
+        background: linear-gradient(180deg, rgb(var(--color-bg-muted) / 0.9), rgb(var(--color-bg-main) / 0.98));
+        padding: 0.75rem;
+        box-shadow: 0 16px 32px -26px rgb(var(--color-text-main) / 0.45);
+    }
+
+    .prose-blog-figures :where(figure img) {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 1rem;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .prose-blog-figures :where(figcaption) {
+        margin-top: 0.85rem;
+        text-align: center;
+    }
 }

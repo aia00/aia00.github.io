@@ -7,9 +7,9 @@
       <stop offset="100%" stop-color="#f5ebe3"/>
     </linearGradient>
     <style>
-      .h { font: 700 34px Georgia, serif; fill: #1e2b24; }
-      .t { font: 600 24px Georgia, serif; fill: #22332a; }
-      .s { font: 500 20px Georgia, serif; fill: #36473d; }
+      .h { font: 700 32px Georgia, serif; fill: #1e2b24; }
+      .t { font: 600 21px Georgia, serif; fill: #22332a; }
+      .s { font: 500 18px Georgia, serif; fill: #36473d; }
       .box { rx: 20; ry: 20; stroke: #304036; stroke-width: 3; }
       .arrow { stroke: #304036; stroke-width: 5; fill: none; marker-end: url(#am); }
     </style>
@@ -19,36 +19,37 @@
   </defs>
 
   <rect width="1280" height="780" fill="url(#bg2)"/>
-  <text x="70" y="82" class="h">A practical execution loop for Skills and MCP</text>
+  <text x="70" y="78" class="h">A practical execution loop for Skills and MCP</text>
 
   <rect x="70" y="150" width="220" height="122" class="box" fill="#fffdf7"/>
-  <text x="102" y="212" class="t">1. Detect task</text>
-  <text x="102" y="250" class="s">classify request type</text>
+  <text x="180" y="208" class="t" text-anchor="middle">1. Detect task</text>
+  <text x="180" y="242" class="s" text-anchor="middle">classify request type</text>
 
   <rect x="340" y="150" width="250" height="122" class="box" fill="#eff4ff"/>
-  <text x="374" y="212" class="t">2. Load Skill</text>
-  <text x="374" y="250" class="s">instructions, scripts, rules</text>
+  <text x="465" y="208" class="t" text-anchor="middle">2. Load Skill</text>
+  <text x="465" y="242" class="s" text-anchor="middle">instructions, scripts, rules</text>
 
   <rect x="650" y="150" width="270" height="122" class="box" fill="#f9efe7"/>
-  <text x="686" y="212" class="t">3. Discover MCP</text>
-  <text x="686" y="250" class="s">tools, resources, prompts</text>
+  <text x="785" y="208" class="t" text-anchor="middle">3. Discover MCP</text>
+  <text x="785" y="242" class="s" text-anchor="middle">tools, resources, prompts</text>
 
   <rect x="980" y="150" width="220" height="122" class="box" fill="#fff9dc"/>
-  <text x="1016" y="212" class="t">4. Execute</text>
-  <text x="1016" y="250" class="s">typed calls to systems</text>
+  <text x="1090" y="208" class="t" text-anchor="middle">4. Execute</text>
+  <text x="1090" y="242" class="s" text-anchor="middle">typed calls to systems</text>
 
   <rect x="180" y="430" width="300" height="132" class="box" fill="#fffdf7"/>
-  <text x="220" y="494" class="t">5. Verify result</text>
-  <text x="220" y="532" class="s">check logs, files, tests, output</text>
+  <text x="330" y="490" class="t" text-anchor="middle">5. Verify result</text>
+  <text x="330" y="524" class="s" text-anchor="middle">check logs, files, tests</text>
 
   <rect x="520" y="414" width="300" height="164" class="box" fill="#eef7ef"/>
-  <text x="560" y="480" class="t">6. Ask or retry</text>
-  <text x="560" y="518" class="s">missing data, auth, approvals</text>
-  <text x="560" y="550" class="s">or failure path</text>
+  <text x="670" y="476" class="t" text-anchor="middle">6. Ask or retry</text>
+  <text x="670" y="510" class="s" text-anchor="middle">missing data, auth,</text>
+  <text x="670" y="538" class="s" text-anchor="middle">approvals or failure path</text>
 
   <rect x="870" y="430" width="300" height="132" class="box" fill="#e9f1fb"/>
-  <text x="910" y="494" class="t">7. Final output</text>
-  <text x="910" y="532" class="s">artifact, summary, next step</text>
+  <text x="1020" y="490" class="t" text-anchor="middle">7. Final output</text>
+  <text x="1020" y="522" class="s" text-anchor="middle">artifact, summary,</text>
+  <text x="1020" y="548" class="s" text-anchor="middle">next step</text>
 
   <path d="M290 210 L330 210" class="arrow"/>
   <path d="M590 210 L640 210" class="arrow"/>
@@ -59,6 +60,7 @@
   <path d="M330 430 L330 290" class="arrow"/>
   <path d="M685 414 L685 290" class="arrow"/>
 
-  <rect x="70" y="646" width="1130" height="82" class="box" fill="#fffdf7"/>
-  <text x="104" y="698" class="s">Design principle: let MCP handle capability exposure, and let the Skill define the preferred execution policy.</text>
+  <rect x="70" y="636" width="1130" height="104" class="box" fill="#fffdf7"/>
+  <text x="635" y="686" class="s" text-anchor="middle">Design principle: let MCP handle capability exposure,</text>
+  <text x="635" y="714" class="s" text-anchor="middle">and let the Skill define the preferred execution policy.</text>
 </svg>
