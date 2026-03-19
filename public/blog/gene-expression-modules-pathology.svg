@@ -58,12 +58,12 @@
   <text x="730" y="672" class="body">IHC: ER / PR / HER2 / Ki-67 markers</text>
   <text x="730" y="702" class="body">Clinical meaning: subtype, risk, treatment</text>
 
-  <path d="M660 268 L660 294" class="arrow"/>
-  <path d="M205 432 L330 532" class="arrow"/>
-  <path d="M485 432 L485 532" class="arrow"/>
-  <path d="M765 432 L500 532" class="arrow"/>
-  <path d="M1035 432 L910 532" class="arrow"/>
-  <path d="M600 716 L670 716" class="arrow"/>
+  <path d="M660 268 L660 302" class="arrow"/>
+  <path d="M205 432 L330 542" class="arrow"/>
+  <path d="M485 432 L485 542" class="arrow"/>
+  <path d="M765 432 L500 542" class="arrow"/>
+  <path d="M1035 432 L910 542" class="arrow"/>
+  <path d="M600 634 L688 634" class="arrow"/>
 
   <rect x="80" y="756" width="1160" height="60" class="box" fill="#ffffff"/>
   <text x="110" y="794" class="body">Modules are groups of genes that move together; PAM50 summarizes their characteristic combinations.</text>

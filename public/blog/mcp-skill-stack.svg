@@ -59,8 +59,8 @@
   <text x="108" y="814" class="tiny">GitHub, databases, docs, Figma, deployment systems,</text>
   <text x="108" y="844" class="tiny">observability platforms, and internal APIs</text>
 
-  <path d="M660 212 L660 300" class="arrow"/>
-  <path d="M570 486 L736 486" class="arrow"/>
-  <path d="M880 575 L880 698" class="arrow"/>
-  <path d="M1120 587 L1120 698" class="arrow"/>
+  <path d="M660 275 L660 318" class="arrow"/>
+  <path d="M570 486 L748 486" class="arrow"/>
+  <path d="M880 575 L880 708" class="arrow"/>
+  <path d="M1120 587 L1120 708" class="arrow"/>
 </svg>

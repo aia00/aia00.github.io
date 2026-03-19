@@ -65,12 +65,12 @@
   <text x="910" y="706" class="body" text-anchor="middle">per-sequence or per-token loss,</text>
   <text x="910" y="734" class="body" text-anchor="middle">plus clipping and sampling rules</text>
 
-  <path d="M290 190 L380 190" class="arrow"/>
-  <path d="M660 190 L780 190" class="arrow"/>
-  <path d="M1040 190 L1072 190" class="arrow"/>
-  <path d="M470 256 L320 348" class="arrow"/>
-  <path d="M525 256 L640 334" class="arrow"/>
-  <path d="M580 256 L950 350" class="arrow"/>
+  <path d="M290 190 L388 190" class="arrow"/>
+  <path d="M660 190 L788 190" class="arrow"/>
+  <path d="M1040 190 L1078 190" class="arrow"/>
+  <path d="M470 256 L310 358" class="arrow"/>
+  <path d="M525 256 L640 342" class="arrow"/>
+  <path d="M580 256 L970 358" class="arrow"/>
   <path d="M310 492 L310 588" class="arrow"/>
   <path d="M640 504 L860 588" class="arrow"/>
   <path d="M970 492 L950 588" class="arrow"/>

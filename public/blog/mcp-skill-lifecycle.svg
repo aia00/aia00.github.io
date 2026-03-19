@@ -51,14 +51,14 @@
   <text x="1020" y="522" class="s" text-anchor="middle">artifact, summary,</text>
   <text x="1020" y="548" class="s" text-anchor="middle">next step</text>
 
-  <path d="M290 210 L330 210" class="arrow"/>
-  <path d="M590 210 L640 210" class="arrow"/>
-  <path d="M920 210 L970 210" class="arrow"/>
-  <path d="M1090 272 L1090 390" class="arrow"/>
-  <path d="M870 496 L830 496" class="arrow"/>
-  <path d="M520 496 L490 496" class="arrow"/>
-  <path d="M330 430 L330 290" class="arrow"/>
-  <path d="M685 414 L685 290" class="arrow"/>
+  <path d="M290 210 L338 210" class="arrow"/>
+  <path d="M590 210 L648 210" class="arrow"/>
+  <path d="M920 210 L978 210" class="arrow"/>
+  <path d="M1090 272 L1090 428" class="arrow"/>
+  <path d="M870 496 L822 496" class="arrow"/>
+  <path d="M520 496 L482 496" class="arrow"/>
+  <path d="M340 430 L340 292 Q340 272 368 272" class="arrow"/>
+  <path d="M685 414 L685 274" class="arrow"/>
 
   <rect x="70" y="636" width="1130" height="104" class="box" fill="#fffdf7"/>
   <text x="635" y="686" class="s" text-anchor="middle">Design principle: let MCP handle capability exposure,</text>
