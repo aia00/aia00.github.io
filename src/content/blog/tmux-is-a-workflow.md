@@ -20,20 +20,11 @@ Many people first meet `tmux` through a shortcut list: `Ctrl-b c` creates a wind
 
 That reaction actually points to the real issue: **the value of `tmux` has never been the key bindings themselves. The value is that it gives you a terminal workspace that can persist over time.**
 
-Inspired by two Zhihu answers, I kept only the two ideas that are truly worth carrying into a practical introduction: `tmux` matters not because split panes look clever, but because it preserves your command-line state; and if you want that state to stay useful over time, you need to organize `session`, `window`, and `pane` as workflow layers. So this article is not a paragraph-by-paragraph retelling. It is a rewritten, day-to-day introduction built around those two points.
+The main shift is simple: stop treating `tmux` as a screen-splitting trick and start treating it as a persistent command-line workspace. Sessions keep work alive, windows separate responsibilities, and panes give you short-range side-by-side views when you actually need them. Once those layers are clear, `tmux` becomes much easier to use well.
 
 ![A simple map of sessions, windows, and panes in a tmux workflow.](/blog/tmux-workflow-map.svg)
 
 _Figure 1. Once you treat tmux as a "persistent workspace," the relationship between session, window, and pane becomes much clearer._
-
-## First, what the two answers are actually pointing out
-
-To avoid the vague phrase "inspired by two answers," here is what I actually took from them:
-
-- **[Answer 1](https://www.zhihu.com/question/409729376/answer/1988946423664878975) focuses on the why**: the part of `tmux` most worth learning is not the split-screen feature itself, but the fact that after an SSH disconnect you can come back, long-running jobs are still there, and your interactive state is still intact.
-- **[Answer 2](https://www.zhihu.com/question/409729376/answer/2016301659391821184) focuses on the how**: what makes `tmux` workable every day is not knowing more shortcuts, but separating the roles of `session`, `window`, and `pane`, and using panes and configuration with restraint.
-
-That is why the article below follows that exact sequence on purpose: first, what problem `tmux` actually solves; then, how it should be organized; and finally, a repeatable way to get started.
 
 ## What problem does tmux actually solve?
 
@@ -235,7 +226,5 @@ Once you adopt that view, `tmux` stops being "the tool that saves me once in a w
 
 ## References
 
-- [Zhihu answer 1](https://www.zhihu.com/question/409729376/answer/1988946423664878975)
-- [Zhihu answer 2](https://www.zhihu.com/question/409729376/answer/2016301659391821184)
 - [`tmux` Getting Started](https://github.com/tmux/tmux/wiki/Getting-Started)
 - [`tmux` manual page](https://man.openbsd.org/tmux)
