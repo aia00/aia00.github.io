@@ -144,6 +144,7 @@ The current split reviewers can now judge:
 
 - code correctness
 - content clarity
+- whether blog prose stays in English unless you explicitly ask for another language
 - factual and scientific reliability
 - consistency with repo style
 - whether the build still passes
