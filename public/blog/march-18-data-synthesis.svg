@@ -8,7 +8,7 @@
     <path d="M760 305H804" stroke="#18332F" stroke-width="3" stroke-linecap="round" />
     <circle cx="418" cy="305" r="12" fill="#18332F" />
     <circle cx="782" cy="305" r="12" fill="#18332F" />
-    <text x="76" y="102" fill="#18332F" font-family="Georgia, 'Times New Roman', serif" font-size="42" font-weight="700">March 18 Research Notes</text>
+    <text x="76" y="102" fill="#18332F" font-family="Georgia, 'Times New Roman', serif" font-size="38" font-weight="700">March 18 Group Meeting Notes</text>
     <text x="76" y="136" fill="#36544F" font-family="Arial, Helvetica, sans-serif" font-size="22">Agentic environments, data curation, and safety layers</text>
     <text x="104" y="214" fill="#18332F" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="700">Agentic Environment</text>
     <text x="104" y="258" fill="#214640" font-family="Arial, Helvetica, sans-serif" font-size="24">Project Vend 2</text>

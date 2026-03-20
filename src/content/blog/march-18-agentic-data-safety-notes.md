@@ -1,6 +1,6 @@
 ---
-title: 'March 18 Research Notes: Agentic Vending, Pre-Training Data, and Constitutional Classifiers'
-excerpt: "A cleaned-up synthesis of the March 18 deck, spanning Project Vend 2, data poisoning, token-level filtering, duplication, replayed pre-training data, and Anthropic's next-generation constitutional classifiers."
+title: 'March 18 Group Meeting Notes: Agentic Vending, Pre-Training Data, and Constitutional Classifiers'
+excerpt: "Cleaned-up listener notes from a March 18 group meeting hosted by my professor, covering Project Vend 2, data poisoning, token-level filtering, duplication, replayed pre-training data, and Anthropic's next-generation constitutional classifiers."
 publishDate: '2026-03-19T09:30:00-04:00'
 isFeatured: false
 tags:
@@ -10,20 +10,20 @@ tags:
   - AI Safety
   - LLM
 seo:
-  title: 'March 18 Research Notes: Agentic Vending, Pre-Training Data, and Constitutional Classifiers'
-  description: 'A synthesis of the March 18 deck on Project Vend 2, pre-training data control, poisoning, duplication, and constitutional classifiers.'
+  title: 'March 18 Group Meeting Notes: Agentic Vending, Pre-Training Data, and Constitutional Classifiers'
+  description: 'Listener notes from a March 18 group meeting on Project Vend 2, pre-training data control, poisoning, duplication, and constitutional classifiers.'
   image:
     src: '/blog/march-18-data-synthesis.svg'
-    alt: 'Diagram connecting agentic environments, training data control, and safety classifiers'
+    alt: 'Diagram summarizing group meeting notes on agentic environments, training data control, and safety classifiers'
 ---
 
-The March 18 deck looks broad on the surface. It starts with an agent running a vending-machine business, moves into pre-training data curation, and ends with constitutional classifiers for safety. But I do not think these are disconnected topics.
+These are cleaned-up listener notes from a March 18 group meeting hosted by my professor. The deck moved from an agent running a vending-machine business to pre-training data curation and then to constitutional classifiers for safety, but the discussion did not feel disconnected.
 
-What follows is my synthesis of the deck's connective tissue and cited papers, not a slide-by-slide transcription of every claim.
+I was mostly there to listen rather than present, so this post is closer to an attendee recap of the deck's connective tissue and cited papers than to a claim of authorship over the material.
 
-The deck itself reads more like a research-group handout than a finished essay. The slides are terse, some opinions are stated very bluntly, and several papers are referenced only through a single takeaway. Turning that into a useful blog post means keeping the specific claims from the PDF while also making the larger argument easier to see.
+The deck itself reads more like a research-group handout than a finished essay. The slides are terse, some opinions are stated very bluntly, and several papers are referenced only through a single takeaway. The useful thing to do here is to keep the specific claims from the PDF while making the larger argument easier to see.
 
-My read is that the deck is really about one question:
+The question that seemed to organize the meeting was this:
 
 > **How much of model behavior can we shape without changing the base model architecture?**
 
@@ -37,9 +37,9 @@ That is why the sequence makes sense. `Project Vend 2` is about shaping agent be
 
 ![A map linking agentic environment design, data curation, and safety classifiers.](/blog/march-18-data-synthesis.svg)
 
-_Figure 1. The March 18 material can be read as a single story about controllability: environment design, data selection, and safety gating are all levers on model behavior._
+_Figure 1. The March 18 meeting material reads as a single story about controllability: environment design, data selection, and safety gating are all levers on model behavior._
 
-## What the deck covers
+## What the meeting deck covers
 
 One reason the PDF can feel more fragmented than it actually is is that each slide compresses a larger paper into one or two bullets. Read at the level of research agenda rather than slide formatting, the structure is clean:
 
@@ -49,7 +49,7 @@ One reason the PDF can feel more fragmented than it actually is is that each sli
 | Pre-training data papers | Small poisoned sample counts matter; filtering can be token-level; replay reduces forgetting; duplication changes with scale | Data curation is a capability-control layer, not just a hygiene step |
 | Constitutional classifiers | Cheap probes can escalate only suspicious cases to a larger model | Safety systems can be hierarchical instead of uniformly expensive |
 
-The PDF also references earlier discussions with placeholders like "link" instead of full citations. I read those as reminders that this deck sits inside an ongoing reading group rather than as missing technical claims that the post needs to reconstruct.
+The PDF also references earlier discussions with placeholders like "link" instead of full citations. That reads less like missing evidence and more like a reminder that the slides sit inside an ongoing group conversation.
 
 ## 1. Project Vend 2: better scaffolding helps, but it does not create business judgment
 
@@ -78,11 +78,11 @@ That outcome is important because it separates two things that are often conflat
 
 Additional tools and oversight can reduce the worst mistakes. They can stop obviously bad purchases, force the agent to look at inventory, and make persuasion attacks harder. But those same controls do not automatically produce strong business judgment. An agent can become less reckless without becoming truly analytical.
 
-I think that is exactly why this environment is interesting.
+That is exactly why this environment is interesting.
 
 ### Why Vend is a strong research environment
 
-The deck explicitly calls this "a perfect environment/example to study agentic behavior in OR/business contexts." I agree with that framing for at least four reasons.
+The deck explicitly calls this "a perfect environment/example to study agentic behavior in OR/business contexts." In the context of the meeting, that framing makes sense for at least four reasons.
 
 First, it has **real objectives**. Revenue, cost, margin, stockouts, and procurement choices give the problem a quantitative structure that is more meaningful than a toy chat benchmark.
 
@@ -106,7 +106,7 @@ That is a useful warning for anyone building agents in commercial settings. If a
 
 ## 2. Pre-training data is not just fuel; it is a capability control surface
 
-The middle of the deck shifts from deployed agents to the data pipeline. This section is the densest part of the material, and I think it carries the strongest technical message.
+The middle of the deck shifts from deployed agents to the data pipeline. This was the densest part of the meeting, and it also seemed to carry the strongest technical message.
 
 The message is this:
 
@@ -116,7 +116,7 @@ The slides briefly point to Hugging Face's [FinePhrase](https://huggingface.co/s
 
 ### A quick note on the FinePhrase slide
 
-The FinePhrase mention is brief, and the slide itself signals that it is only a quick pointer rather than a confident evaluation. So I do not want to assign it more weight than the PDF does.
+The FinePhrase mention is brief, and the slide itself signals that it is only a quick pointer rather than a confident evaluation. It makes sense not to assign it more weight than the PDF does.
 
 What it does show is the intended framing for the rest of the section. The pre-training block is not just a list of unrelated readings. It is a survey of ways to *intervene on the corpus itself*: inspect it better, poison it, filter it more selectively, replay parts of it later, or rethink what counts as duplication.
 
@@ -173,7 +173,7 @@ Token-level filtering promises a finer intervention:
 - remove less collateral information;
 - shape capabilities more selectively.
 
-This is part of a broader trend I find notable: interpretability tools are no longer only diagnostic. They are increasingly being used as control mechanisms inside training-data pipelines.
+One broader trend that came through clearly is that interpretability tools are no longer only diagnostic. They are increasingly being used as control mechanisms inside training-data pipelines.
 
 ## 5. Replaying pre-training data during SFT is a clean answer to forgetting
 
@@ -220,11 +220,11 @@ The reported finding is even more interesting:
 - larger models increasingly do;
 - duplicated samples hurt the scaling behavior of pre-training.
 
-The slide author also briefly gestures to another recent paper as a "negative example," but does not explain the criticism. I would not overread that aside. The durable point here is the metric design: define redundancy in gradient space, then show that redundancy is relative to model scale rather than fixed by string similarity.
+The slide author also briefly gestures to another recent paper as a "negative example," but does not explain the criticism. That aside is hard to weigh without more detail. The durable point here is the metric design: define redundancy in gradient space, then show that redundancy is relative to model scale rather than fixed by string similarity.
 
 This suggests that deduplication policy should be **scale-aware**. A transformation that looks meaningfully distinct to a smaller model may become redundant to a larger one. If so, corpus curation cannot be fully model-agnostic. What counts as wasteful repetition depends on the representational power of the model you are training.
 
-I think that is one of the strongest ideas in the whole deck. It opens a line of thinking where data curation is not a static preprocessing step performed once for every future model size. Instead, it becomes part of the scaling law itself.
+This feels like one of the strongest ideas in the whole deck. It opens a line of thinking where data curation is not a static preprocessing step performed once for every future model size. Instead, it becomes part of the scaling law itself.
 
 ## 7. The notes are skeptical of optimization-geometry-driven data selection
 
@@ -234,7 +234,7 @@ The slide says, in plain terms, that it is "not a good paper" in the author's vi
 
 > You should not change the data selection based on optimization geometry like the gradient or Hessian.
 
-I would present that not as a settled result, but as the stance embedded in the deck. The broader concern is understandable, though.
+It is best to read that not as a settled result, but as the stance embedded in the deck. The broader concern is understandable, though.
 
 If you adjust the data distribution too aggressively based on short-horizon optimization signals, you risk turning pre-training into a reactive process that chases local geometry instead of building a stable, diverse corpus. That could create at least three problems:
 
@@ -261,7 +261,7 @@ That is a remarkably compact summary of where data-centric LLM research is going
 
 The final major topic is Anthropic's ["Next-generation Constitutional Classifiers"](https://www.anthropic.com/research/next-generation-constitutional-classifiers).
 
-The deck presents this with a note of caution: it suggests that this may not be the core mechanism used inside Claude, but it still treats the work as something the open-source community can learn from. I think that is a fair stance.
+The deck presents this with a note of caution: it suggests that this may not be the core mechanism used inside Claude, but it still treats the work as something the open-source community can learn from. For meeting notes, that is a fair way to frame it.
 
 The slide frames the problem in terms familiar from Anthropic's `Constitution` and OpenAI's `Model Spec`:
 
@@ -288,9 +288,9 @@ There is also a deeper idea here: internal representations may carry useful safe
 
 ## 10. The deck's deeper throughline
 
-If I had to compress the whole March 18 deck into three claims, they would be these.
+If the whole March 18 meeting had to be compressed into three claims, these would be the clearest ones.
 
-These three points are my reading of the deck's throughline rather than three literal bullets presented verbatim on a single slide.
+These are my takeaways as a listener rather than three literal bullets presented verbatim on a single slide.
 
 ### 10.1 Behavior is shaped by more than weights
 
@@ -318,9 +318,9 @@ A useful AI system needs all three:
 - operational discipline;
 - governance layers that catch failures efficiently.
 
-## 11. Where I think the strongest research opportunities are
+## 11. Where the discussion seems to point next
 
-The deck implicitly suggests a research agenda that I think is worth making explicit.
+The deck implicitly suggests a research agenda worth making explicit.
 
 ### 11.1 OR-style benchmarks for agentic business behavior
 
@@ -336,7 +336,7 @@ The constitutional-classifier direction suggests that internal activations may b
 
 ## 12. Bottom line
 
-The March 18 deck is best read not as a loose pile of paper summaries, but as a coherent note on **controllability**.
+My main takeaway as a listener was that the March 18 deck works better as a coherent note on **controllability** than as a loose pile of paper summaries.
 
 - `Vend 2` says environment design shapes deployed behavior.
 - The pre-training papers say data composition shapes capability and failure modes.
@@ -344,9 +344,9 @@ The March 18 deck is best read not as a loose pile of paper summaries, but as a 
 
 That is a strong and modern systems view of LLMs. The model matters, of course. But increasingly, the most interesting research is about how we structure the world around the model: its tools, its data, and the mechanisms that decide when to trust it.
 
-If I had to summarize the practical message in one line, it would be this: better AI systems will not come only from larger base models. They will also come from better environments, more deliberate dataset design, and cheaper, smarter ways to route risky cases before they turn into failures.
+If I had to summarize the practical message I left with in one line, it would be this: better AI systems will not come only from larger base models. They will also come from better environments, more deliberate dataset design, and cheaper, smarter ways to route risky cases before they turn into failures.
 
-## Sources Mentioned In The Deck
+## Sources Mentioned In The Meeting Deck
 
 - [Hugging Face FinePhrase](https://huggingface.co/spaces/HuggingFaceFW/finephrase)
 - [Anthropic: A small number of samples can poison LLMs of any size](https://www.anthropic.com/research/small-samples-poison)
